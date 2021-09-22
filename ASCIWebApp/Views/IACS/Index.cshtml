@@ -1,23 +1,27 @@
 ﻿@using ASCIWebApp;
+@using Microsoft.AspNetCore.Http;
 @{
-	ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home Page";
 }
 
 <header>
-	<div class="content-wrapper">
-		<div class="float-left">
-			
-		</div>
-	</div>
+    <div class="content-wrapper">
+        <div class="float-left">
+
+        </div>
+    </div>
 </header>
+
 <div id="body">
-	<form method="post" enctype="multipart/form-data">
-		<div>
-			<label for="file">Choose file to upload</label>
-			<input type="file" id="file" name="file" accept="xml">
-		</div>
-		<div>
-			<button asp-action="UploadDataFromXml">Submit</button>
-		</div>
-	</form>
+
+    <form method="post" enctype="multipart/form-data">
+        <div>
+            <label for="file">Choose file to upload</label><br>
+            <input type="file" id="file" name="file" accept="xml">
+        </div>
+        <div>
+            <button asp-action="UploadDataFromXml" asp-controller="IACSController">Submit</button>
+        </div>
+    </form>
+    <script>alert(@ViewData["Message"])</script>
 </div>

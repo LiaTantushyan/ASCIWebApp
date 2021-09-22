@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace ASCIWebApp.Controllers
 {
@@ -23,7 +24,13 @@ namespace ASCIWebApp.Controllers
 		[HttpPost]
 		public async Task<IActionResult> UploadDataFromXml([FromForm] IFormFile file)
 		{
-			if (file is null || file.Length == default)
+			if (Path.GetExtension(file.FileName) != ".xml")
+			{
+				 ViewData["Message"] = "Please upload Xml,try Again!";
+				return View();
+			}
+
+			else if (file is null || file.Length == default)
 			{
 				return Json(new
 				{
