@@ -20,8 +20,11 @@
             <input type="file" id="file" name="file" accept="xml">
         </div>
         <div>
-            <button asp-action="UploadDataFromXml" asp-controller="IACSController">Submit</button>
+            <button asp-controller="IACS" asp-action="UploadDataFromXml" >Submit</button>
         </div>
     </form>
-    <script>alert(@ViewData["Message"])</script>
+    <script>
+        var str=@ViewData["Message"];
+        alert(str.fontcolor("black"))
+    </script>
 </div>

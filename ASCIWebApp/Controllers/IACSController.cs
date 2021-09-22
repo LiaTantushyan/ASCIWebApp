@@ -26,8 +26,8 @@ namespace ASCIWebApp.Controllers
 		{
 			if (Path.GetExtension(file.FileName) != ".xml")
 			{
-				 ViewData["Message"] = "Please upload Xml,try Again!";
-				return View();
+				ViewData["Message"] = "Please upload Xml,try Again!";
+				return RedirectToAction("Index","IACS");
 			}
 
 			else if (file is null || file.Length == default)
