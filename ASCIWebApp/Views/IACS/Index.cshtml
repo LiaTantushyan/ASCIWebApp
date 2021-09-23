@@ -17,14 +17,14 @@
     <form method="post" enctype="multipart/form-data">
         <div>
             <label for="file">Choose file to upload</label><br>
-            <input type="file" id="file" name="file" accept="xml">
+            <div>Upload Xml file</div>
+            <input type="file" id="file" name="filexml" accept="xml">
+            <div>Upload Xlsx file</div>
+            <input type="file" id="file" name="filexlsx" accept="xlsx">
+
         </div>
         <div>
-            <button asp-controller="IACS" asp-action="UploadDataFromXml" >Submit</button>
+            <button  asp-action="UploadDataFromXml" >Submit</button>
         </div>
     </form>
-    <script>
-        var str=@ViewData["Message"];
-        alert(str.fontcolor("black"))
-    </script>
 </div>
