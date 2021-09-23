@@ -18,13 +18,22 @@
         <div>
             <label for="file">Choose file to upload</label><br>
             <div>Upload Xml file</div>
-            <input type="file" id="file" name="filexml" accept="xml">
+            <input type="file" id="file" name="xml" accept="xml">
             <div>Upload Xlsx file</div>
-            <input type="file" id="file" name="filexlsx" accept="xlsx">
+            <input type="file" id="file" name="xlsx" accept="xlsx">
 
         </div>
         <div>
-            <button  asp-action="UploadDataFromXml" >Submit</button>
+            <button asp-action="UploadDataFromXml">Submit</button>
         </div>
     </form>
+    @if (TempData["Message"] != null)
+    {
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                alert("@TempData["Message"]");
+            });
+        </script>
+    }
 </div>

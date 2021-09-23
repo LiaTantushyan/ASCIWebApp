@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ASCIWebApp.Controllers
 {
@@ -26,35 +27,23 @@ namespace ASCIWebApp.Controllers
         {
             if (Path.GetExtension(xml.FileName) != ".xml")
             {
-                return Json(new
-                {
-                    Message = "Please upload Xml file!",
-                    Succedeed = false
-                });
+                TempData["Message"] = "Please upload Xml file.TRY AGAIN!!!";
+                return RedirectToAction("Index", "IACS");
             }
             if (Path.GetExtension(xlsx.FileName) != ".xlsx")
             {
-                return Json(new
-                {
-                    Message = "Please upload Xlsx file!",
-                    Succedeed = false
-                });
+                TempData["Message"] = "Please upload Xlsx file.TRY AGAIN!!!";
+                return RedirectToAction("Index", "IACS");
             }
             if (xml is null || xml.Length == default)
             {
-                return Json(new
-                {
-                    Message = "Xml file is null or empty",
-                    Succedeed = false
-                });
+                TempData["Message"] = "Xml file is null or empty";
+                return RedirectToAction("Index", "IACS");
             }
             if (xlsx is null || xlsx.Length == default)
             {
-                return Json(new
-                {
-                    Message = "Xlsx file is null or empty",
-                    Succedeed = false
-                });
+                TempData["Message"] = "Xlsx file is null or empty";
+                return RedirectToAction("Index", "IACS");
             }
             var data = await _iacsService.GetUsersFromFileAsync(xml);
 
