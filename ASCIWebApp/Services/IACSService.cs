@@ -24,20 +24,20 @@ namespace ASCIWebApp.Services
         {
             var filePath = Path.GetTempFileName();
             var tempFile = File.Create(filePath);
-            file.CopyToAsync(tempFile);
-            tempFile.Dispose();
-
+            await file.CopyToAsync(tempFile);
+          
             XDocument xtemp = new XDocument(tempFile);
 
             XNamespace ed = "urn:cba-am:ed:v1.0";
             IEnumerable<string> textSegs =from seg
-             in xtemp.Descendants(ed + "SocCardNum" + "PassportNum" + "LAccountNumber")
+             in xtemp.Descendants(ed + "SocCardNum" + "PassportNum" + "LAccountNumber" + "ANTPType")
             select (string)seg;
 
             string str = textSegs.Aggregate(new StringBuilder(),
                 (sb, i) => sb.Append(i),
                 sp => sp.ToString()
             );
+            tempFile.Dispose();
             return textSegs as List<IACS>;
         }
 

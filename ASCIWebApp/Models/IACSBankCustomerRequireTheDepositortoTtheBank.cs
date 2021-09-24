@@ -13,7 +13,7 @@ namespace ASCIWebApp.Models
 
         public ulong LiabilityApprovalDocNamber { get; set; }
 
-        public ulong LAccountNumber { get; set; }
+        public string LAccountNumber { get; set; }
 
         public string LDocType { get; set; }
 

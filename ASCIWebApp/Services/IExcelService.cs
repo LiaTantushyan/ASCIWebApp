@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ASCIWebApp.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,6 @@ namespace ASCIWebApp.Services
 {
     interface IExcelService
     {
-        Task<List<ExcelService>> GetDataFromExcelAsync(IFormFile file);
-        
+      //  Task<List<Excel>> GetDataFromFileAsync(IFormFile file);
     }
 }
