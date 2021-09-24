@@ -9,7 +9,7 @@ namespace ASCIWebApp
 {
 	public interface IIACSService
 	{
-		Task<List<IACS>> GetUsersFromFileAsync(IFormFile file);
+		Task<List<IACS>> GetDataFromFileAsync(IFormFile file);
 
 		Task ReportXmlToDatabase(List<IACS> data);
 	}

@@ -45,7 +45,7 @@ namespace ASCIWebApp.Controllers
                 TempData["Message"] = "Xlsx file is null or empty";
                 return RedirectToAction("Index", "IACS");
             }
-            var data = await _iacsService.GetUsersFromFileAsync(xml);
+            var data = await _iacsService.GetDataFromFileAsync(xml);
 
             return Json(new
             {
