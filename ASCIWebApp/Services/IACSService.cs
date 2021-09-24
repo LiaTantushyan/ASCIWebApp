@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,9 +22,16 @@ namespace ASCIWebApp.Services
 
         public async Task<List<IACS>> GetDataFromFileAsync(IFormFile file)
         {
+            var filePath = Path.GetTempFileName();
+            var tempFile = File.Create(filePath);
+            file.CopyToAsync(tempFile);
+            tempFile.Dispose();
+
+            XDocument xtemp = new XDocument(tempFile);
+
             XNamespace ed = "urn:cba-am:ed:v1.0";
-            XElement root = file as XElement;
-            IEnumerable<string> textSegs =from seg in root.Descendants(ed + "SocCardNum" + "PassportNum" + "LAccountNumber")
+            IEnumerable<string> textSegs =from seg
+             in xtemp.Descendants(ed + "SocCardNum" + "PassportNum" + "LAccountNumber")
             select (string)seg;
 
             string str = textSegs.Aggregate(new StringBuilder(),

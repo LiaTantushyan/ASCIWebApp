@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using ASCIWebApp.Services;
 
 namespace ASCIWebApp.Controllers
 {
     public class IACSController : Controller
     {
         private readonly IIACSService _iacsService;
+        private readonly IExcelService _excelService;
+
         public IACSController(IIACSService iacsService)
         {
             _iacsService = iacsService;
@@ -45,13 +48,14 @@ namespace ASCIWebApp.Controllers
                 TempData["Message"] = "Xlsx file is null or empty";
                 return RedirectToAction("Index", "IACS");
             }
-            var data = await _iacsService.GetDataFromFileAsync(xml);
+            var dataxml = await _iacsService.GetDataFromFileAsync(xml);
+            var dataxlsx = await _excelService.GetDataFromExcelAsync(xlsx);
 
             return Json(new
             {
                 Message = "File was deserialized",
                 Succedeed = true,
-                Value = data
+                //Value = data
             });
         }
     }

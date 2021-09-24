@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ASCIWebApp.Services
 {
-    interface IExcelInfoService
+    interface IExcelService
     {
-        Task<List<ExcelInfoService>> GetDataFromExcelAsync(IFormFile file);
+        Task<List<ExcelService>> GetDataFromExcelAsync(IFormFile file);
         
     }
 }
