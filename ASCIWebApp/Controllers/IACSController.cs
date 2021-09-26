@@ -7,17 +7,20 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using ASCIWebApp.Services;
+using ASCIWebApp.Helpers;
+using ASCIWebApp.Models;
 
 namespace ASCIWebApp.Controllers
 {
     public class IACSController : Controller
     {
-        private readonly IIACSService _iacsService;
+        private readonly IXmlService _iacsService;
         private readonly IExcelService _excelService;
 
-        public IACSController(IIACSService iacsService)
+        public IACSController(IXmlService iacsService, IExcelService excelService)
         {
             _iacsService = iacsService;
+            _excelService = excelService;
         }
 
         public IActionResult Index()
@@ -48,8 +51,9 @@ namespace ASCIWebApp.Controllers
                 TempData["Message"] = "Xlsx file is null or empty";
                 return RedirectToAction("Index", "IACS");
             }
-            var dataxml = await _iacsService.GetDataFromFileAsync(xml);
-            var dataxlsx = await _excelService.GetDataFromExcelAsync(xlsx);
+            var xmlEsiminch = _iacsService.GetDataFromXmlAsync(xml);
+            //var dataxml = XmlCustomSerializer.DeserializeFromXmlFile(xml);
+            //var dataxlsx = await _excelService.GetDataFromExcelAsync(xlsx);
 
             return Json(new
             {

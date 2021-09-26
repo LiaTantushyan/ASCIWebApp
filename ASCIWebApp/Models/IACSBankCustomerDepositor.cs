@@ -23,6 +23,7 @@ namespace ASCIWebApp.Models
         public string Nationality { get; set; }
 
         public string ANTPType { get; set; }
+
         public string SocCardNum { get; set; }
 
         public IACSBankCustomerDepositorPassportTypeName PassportTypeName { get; set; }

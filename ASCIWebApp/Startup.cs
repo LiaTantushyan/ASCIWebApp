@@ -28,7 +28,8 @@ namespace ASCIWebApp
 			services.AddDbContext<IACSDbContext>(options =>
 					options.UseSqlServer(Configuration.GetConnectionString("AppContext")));
 			services.AddMvc();
-			services.AddTransient<IIACSService, IACSService>();
+			services.AddTransient<IXmlService, XmlService>();
+			services.AddTransient<IExcelService, ExcelService>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

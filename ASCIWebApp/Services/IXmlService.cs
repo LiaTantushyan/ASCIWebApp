@@ -7,10 +7,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace ASCIWebApp
 {
-	public interface IIACSService
+	public interface IXmlService
 	{
-		Task<List<IACS>> GetDataFromFileAsync(IFormFile file);
-
-		Task ReportXmlToDatabase(List<IACS> data);
+		Task<string> GetDataFromXmlAsync(IFormFile file);
 	}
 }
