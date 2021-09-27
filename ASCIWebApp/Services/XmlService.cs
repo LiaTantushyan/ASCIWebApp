@@ -20,31 +20,18 @@ namespace ASCIWebApp.Services
             _db = db;
         }
 
+
         public async Task<string> GetDataFromXmlAsync(IFormFile file)
         {
-            var filePath = Path.GetTempFileName();
 
-            var tempFile = File.Create(filePath);
+            var saveXml = Path.Combine("http://localhost:33178/", "file", file.FileName);
 
-            using (tempFile = new FileStream(filePath, FileMode.Append))
+            using (var uploadXml = new FileStream(saveXml, FileMode.Create))
             {
-                await file.CopyToAsync(tempFile);
-
-                XElement root = XElement.Load(filePath);
-                XNamespace ed = "urn:cba-am:ed:v1.0";
-                IEnumerable<string> textSegs =
-                            from seg in root.Descendants(ed + "SecondName")
-                            select (string)seg;
-
-                string str = textSegs.Aggregate(new StringBuilder(),
-                    (sb, i) => sb.Append(i),
-                    sp => sp.ToString()
-                );
-
-                return str;
+                 await file.CopyToAsync(uploadXml);   
             }
-
             return string.Empty;
         }
     }
 }
+
