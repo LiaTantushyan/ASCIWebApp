@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using ASCIWebApp.Data;
 using ASCIWebApp.Helpers;
 using ASCIWebApp.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
 namespace ASCIWebApp.Services
@@ -15,22 +16,29 @@ namespace ASCIWebApp.Services
     public class XmlService : IXmlService
     {
         private readonly IACSDbContext _db;
-        public XmlService(IACSDbContext db)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public XmlService(IACSDbContext db, IWebHostEnvironment webHostEnvironment)
         {
             _db = db;
+            _webHostEnvironment = webHostEnvironment;
         }
-
-
-        public async Task<string> GetDataFromXmlAsync(IFormFile file)
+        public async Task GetDataFromXmlAsync(IFormFile file)
         {
 
-            var saveXml = Path.Combine("http://localhost:33178/", "file", file.FileName);
+            var saveXml = Path.Combine(_webHostEnvironment.WebRootPath,file.FileName);
 
-            using (var uploadXml = new FileStream(saveXml, FileMode.Create))
+            try
             {
-                 await file.CopyToAsync(uploadXml);   
+                using (var uploadXml = new FileStream(saveXml, FileMode.Create))
+                {
+                    await file.CopyToAsync(uploadXml);
+                }
             }
-            return string.Empty;
+            catch(Exception e)
+            {
+               
+            }
+            
         }
     }
 }

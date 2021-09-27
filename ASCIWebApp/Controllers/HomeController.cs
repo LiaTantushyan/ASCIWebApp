@@ -1,4 +1,5 @@
 ﻿using ASCIWebApp.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,7 +13,7 @@ namespace ASCIWebApp.Controllers
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
-
+		
 		public HomeController(ILogger<HomeController> logger)
 		{
 			_logger = logger;

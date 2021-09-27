@@ -16,7 +16,6 @@ namespace ASCIWebApp.Controllers
     {
         private readonly IXmlService _iacsService;
         private readonly IExcelService _excelService;
-
         public IACSController(IXmlService iacsService, IExcelService excelService)
         {
             _iacsService = iacsService;
@@ -51,7 +50,7 @@ namespace ASCIWebApp.Controllers
                 TempData["Message"] = "Xlsx file is null or empty";
                 return RedirectToAction("Index", "IACS");
             }
-            var xmlEsiminch = _iacsService.GetDataFromXmlAsync(xml);
+            var xmllist = _iacsService.GetDataFromXmlAsync(xml);
             //var dataxml = XmlCustomSerializer.DeserializeFromXmlFile(xml);
             //var dataxlsx = await _excelService.GetDataFromExcelAsync(xlsx);
 

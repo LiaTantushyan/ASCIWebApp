@@ -32,7 +32,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\excel\" />
     <Folder Include="wwwroot\xml\" />
-    <Folder Include="wwwroot\NewFolder\" />
   </ItemGroup>
 
 </Project>
