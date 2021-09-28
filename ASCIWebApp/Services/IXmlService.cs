@@ -9,6 +9,7 @@ namespace ASCIWebApp
 {
 	public interface IXmlService
 	{
-		Task GetDataFromXmlAsync(IFormFile file);
+		List<string> GetDataFromXmlAsync(IFormFile file);
+		string GetFilePath(IFormFile formFile);
 	}
 }

@@ -71,6 +71,9 @@ namespace ASCIWebApp.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("ANTPType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
@@ -113,8 +116,8 @@ namespace ASCIWebApp.Migrations
                     b.Property<string>("Sex")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("SocCardNum")
-                        .HasColumnType("bigint");
+                    b.Property<string>("SocCardNum")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SurName")
                         .HasColumnType("nvarchar(max)");
@@ -178,8 +181,8 @@ namespace ASCIWebApp.Migrations
                     b.Property<int>("BDLBanksCode")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("LAccountNumber")
-                        .HasColumnType("decimal(20,0)");
+                    b.Property<string>("LAccountNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<byte>("LAmountOnDeposit")
                         .HasColumnType("tinyint");

@@ -18,13 +18,13 @@
         <div>
             <label for="file">Choose file to upload</label><br>
             <div>Upload Xml file</div>
-            <input type="file" id="file" name="xml" accept="xml">
-            <div>Upload Xlsx file</div>
-            <input type="file" id="file" name="xlsx" accept="xlsx">
+            <input type="file" id="file" name="xmlfile" accept="xml">
+            @*<div>Upload Xlsx file</div>
+            <input type="file" id="file" name="xlsx" accept="xlsx">*@
 
         </div>
         <div>
-            <button asp-action="UploadDataFromXml">Submit</button>
+            <button asp-action="UploadFileToServer">Submit</button>
         </div>
     </form>
     @if (TempData["Message"] != null)

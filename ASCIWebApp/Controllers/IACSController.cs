@@ -14,12 +14,13 @@ namespace ASCIWebApp.Controllers
 {
     public class IACSController : Controller
     {
-        private readonly IXmlService _iacsService;
+        private readonly IXmlService _xmlService;
         private readonly IExcelService _excelService;
-        public IACSController(IXmlService iacsService, IExcelService excelService)
+        private readonly IWebHostEnvironment _webhost;
+        public IACSController(IWebHostEnvironment webhost,IXmlService xmlService)
         {
-            _iacsService = iacsService;
-            _excelService = excelService;
+            _webhost = webhost;
+            _xmlService = xmlService;
         }
 
         public IActionResult Index()
@@ -28,38 +29,28 @@ namespace ASCIWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadDataFromXml([FromForm] IFormFile xml, [FromForm] IFormFile xlsx)
+        public  async Task<IActionResult> UploadFileToServer( IFormFile xmlfile)
         {
-            if (Path.GetExtension(xml.FileName) != ".xml")
+            var a = _webhost.WebRootPath;
+            var b = xmlfile.FileName;
+            var saveXml = Path.Combine(_webhost.WebRootPath, "xmlfile", xmlfile.FileName);
+            string fileExt = Path.GetExtension(xmlfile.FileName);
+            if (fileExt == ".xml" || fileExt == ".txt")
             {
-                TempData["Message"] = "Please upload Xml file.TRY AGAIN!!!";
-                return RedirectToAction("Index", "IACS");
-            }
-            if (Path.GetExtension(xlsx.FileName) != ".xlsx")
-            {
-                TempData["Message"] = "Please upload Xlsx file.TRY AGAIN!!!";
-                return RedirectToAction("Index", "IACS");
-            }
-            if (xml is null || xml.Length == default)
-            {
-                TempData["Message"] = "Xml file is null or empty";
-                return RedirectToAction("Index", "IACS");
-            }
-            if (xlsx is null || xlsx.Length == default)
-            {
-                TempData["Message"] = "Xlsx file is null or empty";
-                return RedirectToAction("Index", "IACS");
-            }
-            var xmllist = _iacsService.GetDataFromXmlAsync(xml);
-            //var dataxml = XmlCustomSerializer.DeserializeFromXmlFile(xml);
-            //var dataxlsx = await _excelService.GetDataFromExcelAsync(xlsx);
+                using (var uploadXml = new FileStream(saveXml, FileMode.Create))
+                {
+                    await xmlfile.CopyToAsync(uploadXml);
+                    ViewData["message"] = $"the file {xmlfile.FileName} is uploaded";
 
-            return Json(new
+                }
+            }
+            else
             {
-                Message = "File was deserialized",
-                Succedeed = true,
-                //Value = data
-            });
+                ViewData["message"] = $" something gone wrong with {xmlfile.FileName} ";
+
+            }
+            var users = _xmlService.GetDataFromXmlAsync(xmlfile);
+            return View();
         }
     }
 }
