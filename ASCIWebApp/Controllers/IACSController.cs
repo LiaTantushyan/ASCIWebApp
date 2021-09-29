@@ -44,9 +44,9 @@ namespace ASCIWebApp.Controllers
             else
             {
                 ViewData["message"] = $" something gone wrong with {xmlfile.FileName} ";
-
             }
-            var users = _xmlService.GetDataFromXmlAsync(xmlfile);
+
+            var users = _xmlService.GetDataFromXml(xmlfile);
             return View();
         }
     }

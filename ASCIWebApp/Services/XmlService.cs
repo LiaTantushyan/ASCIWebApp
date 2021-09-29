@@ -25,6 +25,7 @@ namespace ASCIWebApp.Services
             _db = db;
             _webHostEnvironment = webHostEnvironment;
         }
+
         public string GetFilePath(IFormFile formFile)
         {
             var filePath = Path.GetTempFileName();
@@ -35,30 +36,33 @@ namespace ASCIWebApp.Services
             }
             return filePath;
         }
-        public List<string> GetDataFromXmlAsync(IFormFile file)
+
+        public List<IACSShortModel> GetDataFromXml(IFormFile file)
         {
             var path = GetFilePath(file);
-            List<string> datalist = new List<string>();
-            XElement root = XElement.Load(path);
 
-            //urn:cba-am:ed:v1.0
+            XElement root = XElement.Load(path);
             XNamespace ed = "urn:cba-am:ed:v1.0";
 
-            IEnumerable<IACSShort> a = (from job in root.Descendants(ed + "BankCustomer")
-                                        select new IACSShort
-                                        {
-                                            PassportNum = (string)job.Element(ed + "PassportNum").Value,
-                                            SocCardNum = (string)job.Element(ed + "SocCardNum").Value,
-                                            LAccountNumber = (string)job.Element(ed + "LAccountNumber").Value,
-                                            ANTPType = (string)job.Element(ed + "ANTPType").Value
-                                        });
-            foreach (var item in a)
+            var passportNumbers = root.Descendants(ed + "PassportNum").ToArray();
+            var soccardNumbers = root.Descendants(ed + "SocCardNum").ToArray();
+            var accountNumbers = root.Descendants(ed + "LAccountNumber").ToArray();
+            var antpTypes = root.Descendants(ed + "ANTPType").ToArray();
+
+            var result = new IACSShortModel[passportNumbers.Length];
+
+            for (int i = 0; i < passportNumbers.Length; i++)
             {
-                Console.WriteLine(item.PassportNum);
+                result[i] = new IACSShortModel
+                {
+                    PassportNum = passportNumbers[i].Value,
+                    SocCardNum = soccardNumbers[i].Value,
+                    LAccountNumber = accountNumbers[i].Value,
+                    ANTPType = antpTypes != null ? antpTypes[i].Value.ToString() : string.Empty
+                };
             }
-            return datalist;
+
+            return result.ToList();
         }
     }
-
 }
-

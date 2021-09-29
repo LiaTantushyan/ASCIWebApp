@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ASCIWebApp.Models
 {
-    public class IACSShort
+    public class IACSShortModel
     {
         public string SocCardNum { get; set; }
         public string PassportNum { get; set; }
