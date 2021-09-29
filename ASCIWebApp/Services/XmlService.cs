@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using ASCIWebApp.Data;
@@ -29,37 +30,34 @@ namespace ASCIWebApp.Services
             var filePath = Path.GetTempFileName();
 
             using (var stream = System.IO.File.Create(filePath))
-            {             
-                 formFile.CopyToAsync(stream);
+            {
+                formFile.CopyToAsync(stream);
             }
             return filePath;
         }
         public List<string> GetDataFromXmlAsync(IFormFile file)
-        {
-            var path= GetFilePath(file);
-            List<string> datalist=new List<string>();
+         {
+            var path = GetFilePath(file);
+            List<string> datalist = new List<string>();
             XElement root = XElement.Load(path);
 
             //urn:cba-am:ed:v1.0
             XNamespace ed = "urn:cba-am:ed:v1.0";
 
-            var reports = (from report in root.Descendants("IACSBankCustomer")
-                            where report.Element("IACS").Value.Contains("BankCustomer")
-                           select new IACSShort
-                           {
-                               PassportNum = report.Element("PassportNum").Value,
-                               SocCardNum = report.Element("SocCardNum").Value,
-                               LAccountNumber = report.Element("LAccountNumber").Value,
-                               ANTPType = report.Element("ANTPType").Value
-                           }).ToList();
+            IEnumerable<XElement> elements = root.Descendants(ed + "BankCustomer"); 
 
-            foreach (var item in reports)
-            {
-               
-            }
+            var result = (from job in root.DescendantsAndSelf()
+                          select new IACSShort
+                          {
+                              PassportNum = (string)job.Element(ed + "PassportNum").Value,
+                              SocCardNum = (string)job.Element(ed + "SocCardNum").Value,
+                              LAccountNumber = (string)job.Element(ed + "LAccountNumber").Value,
+                              ANTPType = (string)job.Element(ed + "ANTPType").Value
+                          });
+           // var x = result.ToList();
             return datalist;
         }
     }
-   
+
 }
 
