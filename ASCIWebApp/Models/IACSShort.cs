@@ -7,10 +7,10 @@ namespace ASCIWebApp.Models
 {
     public class IACSShort
     {
-        public uint SocCardNum { get; set; }
+        public string SocCardNum { get; set; }
         public string PassportNum { get; set; }
-        public ulong LAccountNumber { get; set; }
-        public uint ANTPType { get; set; }
+        public string LAccountNumber { get; set; }
+        public string ANTPType { get; set; }
 
     }
 }

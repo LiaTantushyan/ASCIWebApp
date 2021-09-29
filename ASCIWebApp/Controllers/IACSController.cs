@@ -15,7 +15,6 @@ namespace ASCIWebApp.Controllers
     public class IACSController : Controller
     {
         private readonly IXmlService _xmlService;
-        private readonly IExcelService _excelService;
         private readonly IWebHostEnvironment _webhost;
         public IACSController(IWebHostEnvironment webhost,IXmlService xmlService)
         {
@@ -31,8 +30,6 @@ namespace ASCIWebApp.Controllers
         [HttpPost]
         public  async Task<IActionResult> UploadFileToServer( IFormFile xmlfile)
         {
-            var a = _webhost.WebRootPath;
-            var b = xmlfile.FileName;
             var saveXml = Path.Combine(_webhost.WebRootPath, "xmlfile", xmlfile.FileName);
             string fileExt = Path.GetExtension(xmlfile.FileName);
             if (fileExt == ".xml" || fileExt == ".txt")
