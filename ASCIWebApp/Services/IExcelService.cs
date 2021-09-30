@@ -9,6 +9,7 @@ namespace ASCIWebApp.Services
 {
     public interface IExcelService
     {
-      //  Task<List<Excel>> GetDataFromFileAsync(IFormFile file);
+        Task<List<IACSShortModel>> DataExcel(IFormFile file);
+        string GetFilePath(IFormFile formFile);
     }
 }

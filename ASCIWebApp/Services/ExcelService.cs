@@ -1,9 +1,11 @@
 ﻿using ASCIWebApp.Models;
+using ClosedXML.Excel;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,30 +14,72 @@ namespace ASCIWebApp.Services
 {
     public class ExcelService : IExcelService
     {
-        /*Task<List<Excel>> IExcelService.GetDataFromFileAsync(IFormFile file)
+        public string GetFilePath(IFormFile formFile)
         {
-            List<Excel> users = new List<Excel>();
-            var fileName = file.FileName;
-            // For .net core, the next line requires the NuGet package, 
-            // System.Text.Encoding.CodePages
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-            using (var stream = System.IO.File.Open(fileName, FileMode.Open, FileAccess.Read))
-            {
-                using (var reader = ExcelReaderFactory.CreateReader(stream))
-                {
+            var filePath = Path.GetTempFileName();
 
-                    while (reader.Read()) //Each row of the file
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                formFile.CopyToAsync(stream);
+            }
+            return filePath;
+        }
+        Task<List<IACSShortModel>> IExcelService.DataExcel(IFormFile file)
+        {
+            var filePath = GetFilePath(file);
+            filePath = System.IO.Path.GetTempFileName().Replace(".tmp", ".xlsx");
+            //Taken List of data from json file which we want to export to excel.
+            List<IACSShortModel> stulist = new List<IACSShortModel>();
+            DataTable dt = new DataTable();
+            //required  using ClosedXML.Excel;        
+            //Open the Excel file using ClosedXML.
+            using (XLWorkbook workBook = new XLWorkbook(filePath)) //refer previous code to get the file path.
+            {
+                //Read the first Sheet from Excel file.
+                IXLWorksheet workSheet = workBook.Worksheet(1);
+                //Loop through the Worksheet rows.
+                bool firstRow = true;
+                foreach (IXLRow row in workSheet.Rows())
+                {
+                    //Use the first row to add columns to DataTable.
+                    if (firstRow)
                     {
-                        users.Add(new Excel
+                        foreach (IXLCell cell in row.Cells())
                         {
-                            SocCardNum = reader.GetValue(0).ToString(),
-                            PassportNum = reader.GetValue(1).ToString(),
-                            LAccountNumber = reader.GetValue(2).ToString()
-                        });
+                            dt.Columns.Add(cell.Value.ToString());
+                        }
+                        firstRow = false;
+                    }
+                    else
+                    {
+                        //Add rows to DataTable.
+                        dt.Rows.Add();
+                        int i = 0;
+                        foreach (IXLCell cell in row.Cells())
+                        {
+                            dt.Rows[dt.Rows.Count - 1][i] = cell.Value.ToString();
+                            i++;
+                        }
+                    }
+
+                }
+            }
+            if (dt.Rows.Count > 0)
+            {
+                foreach (DataRow row in dt.Rows)
+                {
+                    if (!(row[0] is DBNull))
+                    {
+                        IACSShortModel student = new IACSShortModel();
+                        student.SocCardNum = row[0].ToString();
+                        student.PassportNum = row[1].ToString();
+                        student.LAccountNumber = row[2].ToString();
+                        student.ANTPType = row[3].ToString();
+                        stulist.Add(student);
                     }
                 }
             }
-            return <List<Excel>>users;
-        }*/
+            return null;
+        }
     }
 }

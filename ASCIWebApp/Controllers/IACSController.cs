@@ -37,13 +37,13 @@ namespace ASCIWebApp.Controllers
                 using (var uploadXml = new FileStream(saveXml, FileMode.Create))
                 {
                     await xmlfile.CopyToAsync(uploadXml);
-                    ViewData["message"] = $"the file {xmlfile.FileName} is uploaded";
+                    TempData["message"] = $"the file {xmlfile.FileName} is uploaded";
 
                 }
             }
             else
             {
-                ViewData["message"] = $" something gone wrong with {xmlfile.FileName} ";
+                TempData["message"] = $" something gone wrong with {xmlfile.FileName} ";
             }
 
             var users = _xmlService.GetDataFromXml(xmlfile);

@@ -26,7 +26,7 @@ namespace ASCIWebApp.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public string GetFilePath(IFormFile formFile)
+        public  string GetFilePath(IFormFile formFile)
         {
             var filePath = Path.GetTempFileName();
 
@@ -58,7 +58,7 @@ namespace ASCIWebApp.Services
                     PassportNum = passportNumbers[i].Value,
                     SocCardNum = soccardNumbers[i].Value,
                     LAccountNumber = accountNumbers[i].Value,
-                    ANTPType = antpTypes != null ? antpTypes[i].Value.ToString() : string.Empty
+                    ANTPType = antpTypes[i] != null ? antpTypes[i].Value.ToString() : string.Empty
                 };
             }
 
