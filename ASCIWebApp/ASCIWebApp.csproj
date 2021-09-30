@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Excel\UploadFileExcelToServer.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EPPlus" Version="5.7.5" />
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
     <PackageReference Include="LinqToExcel" Version="1.11.0" />
@@ -31,6 +35,10 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\excel\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Excel\UploadFileExcelToServer.cshtml" />
   </ItemGroup>
 
 </Project>
