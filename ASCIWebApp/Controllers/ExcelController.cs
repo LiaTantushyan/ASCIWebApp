@@ -7,6 +7,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using ASCIWebApp.Services;
+using System.Collections.Generic;
+using ASCIWebApp.Models;
 
 namespace ExcelController.Controllers
 {
@@ -20,7 +22,12 @@ namespace ExcelController.Controllers
             _webhost = webhost;
             _excelService = excelService;
         }
-
+        [HttpGet]
+        //public IActionResult Index(List<IACSShort> users=null)
+        //{
+        //    users = users == null ? new List<IACSShort>(): users;
+        //    return View(users);
+        //}
         public IActionResult Index()
         {
             return View();
@@ -39,8 +46,8 @@ namespace ExcelController.Controllers
                     await xlsxfile.CopyToAsync(fileStream);
                 }
             }
-            var users = _excelService.DataExcel(xlsxfile);
-            return View("UploadFileExcelToServer");
+            var users = _excelService.GetDataFromExcel(xlsxfile.FileName);
+            return View(users);
         }
 
     }

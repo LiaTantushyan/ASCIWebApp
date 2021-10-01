@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -26,7 +27,7 @@ namespace ASCIWebApp.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public  string GetFilePath(IFormFile formFile)
+        public string GetFilePath(IFormFile formFile)
         {
             var filePath = Path.GetTempFileName();
 
@@ -37,11 +38,12 @@ namespace ASCIWebApp.Services
             return filePath;
         }
 
-        public List<IACSShortModel> GetDataFromXml(IFormFile file)
+        public List<IACSShort> GetDataFromXml(IFormFile file)
         {
             var path = GetFilePath(file);
-
+            Thread.Sleep(3000);
             XElement root = XElement.Load(path);
+            
             XNamespace ed = "urn:cba-am:ed:v1.0";
 
             var passportNumbers = root.Descendants(ed + "PassportNum").ToArray();
@@ -49,19 +51,18 @@ namespace ASCIWebApp.Services
             var accountNumbers = root.Descendants(ed + "LAccountNumber").ToArray();
             var antpTypes = root.Descendants(ed + "ANTPType").ToArray();
 
-            var result = new IACSShortModel[passportNumbers.Length];
+            var result = new IACSShort[passportNumbers.Length];
 
             for (int i = 0; i < passportNumbers.Length; i++)
             {
-                result[i] = new IACSShortModel
+                result[i] = new IACSShort
                 {
                     PassportNum = passportNumbers[i].Value,
                     SocCardNum = soccardNumbers[i].Value,
                     LAccountNumber = accountNumbers[i].Value,
-                    ANTPType = antpTypes[i] != null ? antpTypes[i].Value.ToString() : string.Empty
+                    ANTPType = antpTypes.Length > i ? antpTypes[i].Value.ToString() : string.Empty
                 };
             }
-
             return result.ToList();
         }
     }

@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace ASCIWebApp.Services
 {
-    public interface IExcelService
+    public interface  IExcelService
     {
-        Task<List<IACSShortModel>> DataExcel(IFormFile file);
-        string GetFilePath(IFormFile formFile);
+        List<IACSShort> GetDataFromExcel(string fileName);
     }
 }
