@@ -23,25 +23,24 @@ namespace ASCIWebApp.Services
             {
                 using (ExcelPackage package = new ExcelPackage(stream))
                 {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
-                    if (worksheet == null)
-                    {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var columninfo = Enumerable.Range(1, worksheet.Dimension.Columns).ToList().Select(n =>
+                       new { Index = n, ColumName = worksheet.Cells[1, n].Value.ToString() }
+                    );
 
-                    }
-                    else
-                    {
-                        var rowcount = worksheet.Dimension.Rows;
 
-                        for (int row = 2; row < rowcount; row++)
+                    for (int row = 2; row < worksheet.Dimension.Rows; row++)
+                    {
+                        //T obj = (T)Activator.CreateInstance(typeof(T));
+                        var obj = new IACSShort();
+                        foreach (var prop in typeof(IACSShort).GetProperties())
                         {
-                            users.Add(new IACSShort
-                            {
-                                SocCardNum = (worksheet.Cells[row, 1].Value ?? string.Empty).ToString(),
-                                PassportNum = (worksheet.Cells[row, 2].Value ?? string.Empty).ToString(),
-                                LAccountNumber = (worksheet.Cells[row, 3].Value ?? string.Empty).ToString(),
-                                ANTPType = (worksheet.Cells[row, 4].Value ?? string.Empty).ToString()
-                            });
+                            int col = columninfo.SingleOrDefault(c => c.ColumName == prop.Name).Index;
+                            var val = worksheet.Cells[row, col].Value;
+                            //var propertytype = prop.GetType();
+                            prop.SetValue(obj, val);
                         }
+                        users.Add(obj);
                     }
                 }
             }

@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Views\Excel\UploadFileExcelToServer.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.95.4" />
     <PackageReference Include="EPPlus" Version="5.7.5" />
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
@@ -32,16 +28,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="Microsoft.Web.Infrastructure" Version="1.0.0" />
+    <PackageReference Include="NPOI" Version="2.5.4" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\excel\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Views\Excel\UploadFileExcelToServer.cshtml" />
   </ItemGroup>
 
 </Project>

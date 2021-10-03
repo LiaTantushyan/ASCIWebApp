@@ -10,6 +10,5 @@ namespace ASCIWebApp
 	public interface IXmlService
 	{
 		List<IACSShort> GetDataFromXml(IFormFile file);
-		string GetFilePath(IFormFile formFile);
 	}
 }

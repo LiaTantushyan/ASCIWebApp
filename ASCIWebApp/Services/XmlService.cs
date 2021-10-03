@@ -27,23 +27,12 @@ namespace ASCIWebApp.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public string GetFilePath(IFormFile formFile)
-        {
-            var filePath = Path.GetTempFileName();
-
-            using (var stream = System.IO.File.Create(filePath))
-            {
-                formFile.CopyToAsync(stream);
-            }
-            return filePath;
-        }
-
         public List<IACSShort> GetDataFromXml(IFormFile file)
         {
-            var path = GetFilePath(file);
+            var path = XmlCustomSerializer.GetFilePath(file);
             Thread.Sleep(3000);
             XElement root = XElement.Load(path);
-            
+
             XNamespace ed = "urn:cba-am:ed:v1.0";
 
             var passportNumbers = root.Descendants(ed + "PassportNum").ToArray();
@@ -63,6 +52,7 @@ namespace ASCIWebApp.Services
                     ANTPType = antpTypes.Length > i ? antpTypes[i].Value.ToString() : string.Empty
                 };
             }
+
             return result.ToList();
         }
     }

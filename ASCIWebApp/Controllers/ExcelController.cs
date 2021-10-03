@@ -22,7 +22,7 @@ namespace ExcelController.Controllers
             _webhost = webhost;
             _excelService = excelService;
         }
-        [HttpGet]
+        
         //public IActionResult Index(List<IACSShort> users=null)
         //{
         //    users = users == null ? new List<IACSShort>(): users;
@@ -35,19 +35,23 @@ namespace ExcelController.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadFileExcelToServer(IFormFile xlsxfile)
         {
-            if (xlsxfile == null)
-                return Content("File Not Selected");
             var saveXml = Path.Combine(_webhost.WebRootPath, xlsxfile.FileName);
             string fileExtension = Path.GetExtension(xlsxfile.FileName);
-            if (fileExtension == ".xlsx")
+            if (fileExtension == ".xlsx" && xlsxfile!=null)
             {
                 using (var fileStream = new FileStream(saveXml, FileMode.Create))
                 {
                     await xlsxfile.CopyToAsync(fileStream);
+                    TempData["message"] = "Xlsx file is uploaded";
                 }
             }
+            else
+            {
+                TempData["message"] = "Wrong format file/Null file, please try again";
+                return View();
+            }
             var users = _excelService.GetDataFromExcel(xlsxfile.FileName);
-            return View(users);
+            return View();
         }
 
     }

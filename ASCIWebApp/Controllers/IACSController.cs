@@ -44,6 +44,7 @@ namespace ASCIWebApp.Controllers
             else
             {
                 TempData["message"] = $" something gone wrong with {xmlfile.FileName} ";
+                return View();
             }
 
             var users = _xmlService.GetDataFromXml(xmlfile);
@@ -51,3 +52,4 @@ namespace ASCIWebApp.Controllers
         }
     }
 }
+    
