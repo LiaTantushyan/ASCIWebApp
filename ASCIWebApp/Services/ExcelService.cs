@@ -28,23 +28,31 @@ namespace ASCIWebApp.Services
                        new { Index = n, ColumName = worksheet.Cells[1, n].Value.ToString() }
                     );
 
-
                     for (int row = 2; row < worksheet.Dimension.Rows; row++)
                     {
-                        //T obj = (T)Activator.CreateInstance(typeof(T));
-                        var obj = new IACSShort();
-                        foreach (var prop in typeof(IACSShort).GetProperties())
+                        for (int i = 1; i <= worksheet.Dimension.Columns; i++)
                         {
-                            int col = columninfo.SingleOrDefault(c => c.ColumName == prop.Name).Index;
-                            var val = worksheet.Cells[row, col].Value;
-                            //var propertytype = prop.GetType();
-                            prop.SetValue(obj, val);
+                            if(worksheet.Cells[row, i].Value != null)
+                            {
+                                var obj = new IACSShort();
+                                foreach (var prop in typeof(IACSShort).GetProperties())
+                                {
+                                    int col = columninfo.FirstOrDefault(c => c.ColumName == prop.Name).Index;
+                                    var val = worksheet.Cells[row, col].Value != null ? worksheet.Cells[row, col].Value?.ToString() : string.Empty;
+                                    prop.SetValue(obj, val);
+                                }
+                                users.Add(obj);
+                            }
                         }
-                        users.Add(obj);
+                       
                     }
                 }
             }
-            return users;
+
+            return users.Where(i => !string.IsNullOrEmpty(i.LAccountNumber)
+            && !string.IsNullOrEmpty(i.PassportNum)
+            && !string.IsNullOrEmpty(i.SocCardNum))
+                .ToList();
         }
     }
 }

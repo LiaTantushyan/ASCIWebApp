@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using ASCIWebApp.Services;
 using System.Collections.Generic;
 using ASCIWebApp.Models;
+using ASCIWebApp.Helpers;
 
 namespace ExcelController.Controllers
 {
@@ -35,10 +36,18 @@ namespace ExcelController.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadFileExcelToServer(IFormFile xlsxfile)
         {
+            if(xlsxfile.Length==0 || xlsxfile == null)
+            {
+                TempData["message"] = "Something is wrong with file, TRY AGAIN!";
+                return View();
+            }
             var saveXml = Path.Combine(_webhost.WebRootPath, xlsxfile.FileName);
             string fileExtension = Path.GetExtension(xlsxfile.FileName);
-            if (fileExtension == ".xlsx" && xlsxfile!=null)
+            if (fileExtension == ".xlsx" || fileExtension=="xls")
             {
+                if (System.IO.File.Exists(xlsxfile.ContentDisposition)){
+                    System.IO.File.Delete(xlsxfile.ContentDisposition);
+                }
                 using (var fileStream = new FileStream(saveXml, FileMode.Create))
                 {
                     await xlsxfile.CopyToAsync(fileStream);
