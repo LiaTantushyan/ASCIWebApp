@@ -32,23 +32,26 @@ namespace ASCIWebApp.Controllers
         {
             var saveXml = Path.Combine(_webhost.WebRootPath, "xmlfile", xmlfile.FileName);
             string fileExt = Path.GetExtension(xmlfile.FileName);
+            if (xmlfile.Length == 0 || xmlfile == null)
+            {
+                TempData["message"] = "Please upload a file that is not null or empty";
+                return View();
+            }
             if (fileExt == ".xml" || fileExt == ".txt")
             {
                 using (var uploadXml = new FileStream(saveXml, FileMode.Create))
                 {
                     await xmlfile.CopyToAsync(uploadXml);
                     TempData["message"] = $"the file {xmlfile.FileName} is uploaded";
-
                 }
             }
             else
             {
-                TempData["message"] = $" something gone wrong with {xmlfile.FileName} ";
+                TempData["message"] = $"File must have .xml/.txt extension";
                 return View();
             }
-
-            var users = _xmlService.GetDataFromXml(xmlfile);
-            return View();
+           // var users = _xmlService.GetDataFromXml(xmlfile);
+            return RedirectToAction("Index","Excel");
         }
     }
 }

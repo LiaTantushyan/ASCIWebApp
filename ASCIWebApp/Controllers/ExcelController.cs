@@ -36,30 +36,34 @@ namespace ExcelController.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadFileExcelToServer(IFormFile xlsxfile)
         {
-            if(xlsxfile.Length==0 || xlsxfile == null)
+            var s = Request; ;
+            var filepath = Path.GetTempPath();
+
+            if (System.IO.File.Exists(filepath))
             {
-                TempData["message"] = "Something is wrong with file, TRY AGAIN!";
-                return View();
+                System.IO.File.Delete(filepath);
+            }
+            if (xlsxfile.Length==0 || xlsxfile == null)
+            {
+                TempData["message"] = "Please upload a file that is not null or empty";
+                return View("Index");
             }
             var saveXml = Path.Combine(_webhost.WebRootPath, xlsxfile.FileName);
             string fileExtension = Path.GetExtension(xlsxfile.FileName);
             if (fileExtension == ".xlsx" || fileExtension=="xls")
             {
-                if (System.IO.File.Exists(xlsxfile.ContentDisposition)){
-                    System.IO.File.Delete(xlsxfile.ContentDisposition);
-                }
                 using (var fileStream = new FileStream(saveXml, FileMode.Create))
                 {
                     await xlsxfile.CopyToAsync(fileStream);
-                    TempData["message"] = "Xlsx file is uploaded";
+                    TempData["message"] = "Files are successfully uploaded";
                 }
             }
             else
             {
-                TempData["message"] = "Wrong format file/Null file, please try again";
-                return View();
+                TempData["message"] = "Wrong format file";
+                return View("Index");
             }
-            var users = _excelService.GetDataFromExcel(xlsxfile.FileName);
+           // var users = _excelService.GetDataFromExcel(xlsxfile.FileName);
             return View();
         }
 

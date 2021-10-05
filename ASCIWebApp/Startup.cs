@@ -49,19 +49,12 @@ namespace ASCIWebApp
 
 			app.UseAuthorization();
 
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllerRoute(
-            //        name: "default",
-            //        pattern: "{controller=IACS}/{action=Index}/{id?}");
-            //});
-			app.UseEndpoints(endpoints =>
-			{
-				endpoints.MapControllerRoute(
-					name: "default",
-					pattern: "{controller=Excel}/{action=Index}/{id?}");
-			});
-
-		}
-	}
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=IACS}/{action=Index}/{id?}");
+            });
+        }
+    }
 }
