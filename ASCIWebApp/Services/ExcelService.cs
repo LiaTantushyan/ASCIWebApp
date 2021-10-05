@@ -9,41 +9,42 @@ using System.Threading.Tasks;
 using System.Data;
 using OfficeOpenXml;
 using Xml.Schema.Linq;
+using ASCIWebApp.Helpers;
 
 namespace ASCIWebApp.Services
 {
     public class ExcelService : IExcelService
     {
-        public List<IACSShort> GetDataFromExcel(string fileName)
+        public List<string> GetDataFromExcel(IFormFile file, string uniqueColumn)
         {
-           
-            List<IACSShort> users = new List<IACSShort>();
-            var fName = $"{Directory.GetCurrentDirectory()}{@"\wwwroot\"}" + "\\" + fileName;
+            var filePath = XmlCustomSerializer.GetFilePath(file);
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            using (var stream = new FileStream(fName, FileMode.Open, FileAccess.Read))
-            {
-                using (ExcelPackage package = new ExcelPackage(stream))
-                {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    var columninfo = Enumerable.Range(1, worksheet.Dimension.Columns).ToList().Select(n =>
-                       new { Index = n, ColumName = worksheet.Cells[1, n].Value.ToString() }
-                    );
+            List<string> result = new List<string>();
 
-                    for (int row = 2; row <= worksheet.Dimension.Rows; row++)
+            using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
+            {
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    var data = reader.AsDataSet();
+                    
+                    foreach (DataTable table in data.Tables)
                     {
-                        var obj = new IACSShort();
-                        foreach (var prop in typeof(IACSShort).GetProperties())
+                        foreach (DataRow row in table.Rows)
                         {
-                            int col = columninfo.FirstOrDefault(c => c.ColumName == prop.Name).Index;
-                            var val = worksheet.Cells[row.ToString()].Value != null ? worksheet.Cells[row.ToString()].Value?.ToString() : string.Empty;
-                            prop.SetValue(obj, val);
+                            foreach (DataColumn column in table.Columns)
+                            {
+                                if (column.ColumnName == uniqueColumn)
+                                {
+                                    result.Add(row[column.ColumnName].ToString());
+                                }       
+                            }
                         }
-                        users.Add(obj);
                     }
                 }
             }
-            return users;
+
+            return result;
         }
     }
 }

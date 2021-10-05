@@ -27,35 +27,16 @@ namespace ASCIWebApp.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public List<IACSShort> GetDataFromXml(IFormFile file)
+        public List<string> GetDataFromXml(IFormFile file, string uniqueColumn)
         {
-            var selectedField= "PassportNum";
-            var path = XmlCustomSerializer.GetFilePath(file);
-            Thread.Sleep(3000);
-            XElement root = XElement.Load(path);
-
+            XElement root = XElement.Load(XmlCustomSerializer.GetFilePath(file));
             XNamespace ed = "urn:cba-am:ed:v1.0";
 
-            //var passportNumbers = root.Descendants(ed + "PassportNum").ToArray();
-            //var soccardNumbers = root.Descendants(ed + "SocCardNum").ToArray();
-            //var accountNumbers = root.Descendants(ed + "LAccountNumber").ToArray();
-            IEnumerable<object> antpTypes = root.Descendants(ed + "selectedField").ToList();
-
-            var listSelectedField = root.Descendants(ed + "selectedField");
-            //var result = new IACSShort[passportNumbers.Length];
-
-            //for (int i = 0; i < passportNumbers.Length; i++)
-            //{
-            //    result[i] = new IACSShort
-            //    {
-            //        PassportNum = passportNumbers[i].Value,
-            //        SocCardNum = soccardNumbers[i].Value,
-            //        LAccountNumber = accountNumbers[i].Value,
-            //        ANTPType = antpTypes.Length > i ? antpTypes[i].Value.ToString() : string.Empty
-            //    };
-            //}
-
-            return null;
+            var listSelectedField = root.Descendants(ed + uniqueColumn)
+                .Select(i=>i.Value.ToString())
+                .ToList();
+           
+            return listSelectedField;
         }
     }
 }

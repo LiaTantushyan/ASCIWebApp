@@ -22,7 +22,7 @@
             });
         </script>
     }
-    <select asp-for="selectedAnalyst" class="form-control">
+    <select class="form-control">
         <option value="" selected disabled hidden>Choose here</option>
         <option value="SocCardNum">SocCardNum</option>
         <option value="PassportNum">PassportNum</option>
@@ -42,15 +42,5 @@
             <button asp-action="UploadFileToServer">Submit</button>
         </div>
     </form>
-    @section scripts{
-        <script>
-            $("[name=selectedAnalyst]").on("change", function () {
-                var analystId = $(this).val();
-                var accept = $(this).closest('td').next().find("a")[0];
-                var oldUrl = accept.href;
-                var newUrl = oldUrl + "&analystid=" + analystId;
-                $(accept).attr("href", newUrl);
-            })
-        </script>
-    }
+    
 </div>

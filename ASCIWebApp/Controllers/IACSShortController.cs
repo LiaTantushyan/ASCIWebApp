@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Hosting;
 using ASCIWebApp.Services;
 using ASCIWebApp.Helpers;
 using ASCIWebApp.Models;
+using System.Data;
+using ClosedXML.Excel;
 
 namespace ASCIWebApp.Controllers
 {
@@ -29,64 +31,71 @@ namespace ASCIWebApp.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> UploadFileToServer(IFormFile xmlfile, IFormFile xlsxfile)
+        public async Task<IActionResult> UploadFileToServer(IFormFile xml, IFormFile excel)
         {
-            string s = Request.Form["aa"].ToString();
-            var saveXml = Path.Combine(_webhost.WebRootPath, "xmlfile", xmlfile.FileName);
-            var saveXlsx = Path.Combine(_webhost.WebRootPath, "xlsxfile", xlsxfile.FileName);
-
-            string fileExtensionXml = Path.GetExtension(xmlfile.FileName);
-            string fileExtensionXlsx = Path.GetExtension(xlsxfile.FileName);
+            string xmlFileExtension = Path.GetExtension(xml.FileName);
+            string excelFileExtension = Path.GetExtension(excel.FileName);
 
 
-            if (xmlfile.Length == 0 || xmlfile == null)
+            if (xml.Length == 0 || xml == null)
             {
                 TempData["message"] = "Please upload a file that is not null or empty";
                 return View("Index");
             }
 
-            if (fileExtensionXml == ".xml" || fileExtensionXml == ".txt" )
+            if (xmlFileExtension != ".xml" || xmlFileExtension != ".txt")
             {
-                using (var uploadXml = new FileStream(saveXml, FileMode.Create))
-                {
-                    await xmlfile.CopyToAsync(uploadXml);
-                }               
-            }
-            else
-            {
-                TempData["message"] = $"File must have .xml/.txt extension";
+                TempData["message"] = $"XML file must have .xml/.txt extension";
                 return View("Index");
             }
-            if (xlsxfile.Length == 0 || xlsxfile == null)
+            
+            if (excel.Length == 0 || excel == null)
             {
                 TempData["message"] = "Please upload a file that is not null or empty";
                 return View("Index");
             }
-            if (fileExtensionXlsx == ".xlsx" || fileExtensionXlsx == ".xls")
+
+            if (excelFileExtension != ".xlsx" || excelFileExtension != ".xls")
             {
-                using (var uploadXml = new FileStream(saveXml, FileMode.Create))
-                {
-                    await xmlfile.CopyToAsync(uploadXml);
-                    TempData["message"] = $"Files are uploaded";
-                }
-            }
-            else
-            {                  
-                TempData["message"] = $"File must have .xlsx/.xls extension";
+                TempData["message"] = $"Excel file must have .xlsx/.xls extension";
                 return View("Index");
             }
-            var listXml = _xmlService.GetDataFromXml(xmlfile);
-            var listExcel = _excelService.GetDataFromExcel(xlsxfile.FileName);
-            await Compare(listXml, listExcel);
-            return View("Index");
+
+            TempData["message"] = $"Files are succesfully validated. Press Compare to compare them";
+            return View("Compare");
         }
 
-        public async Task<List<IACSShort>> Compare(List<IACSShort> listXml, List<IACSShort> listXlsx)
+        [HttpPost]
+        public async Task<List<IACSShort>> Compare([FromForm] IFormFile xml, [FromForm] IFormFile excel, [FromForm] string uniqueColumn)
         {
+            var dataFromXml = _xmlService.GetDataFromXml(xml, uniqueColumn);
+            var dataFromExcel = _excelService.GetDataFromExcel(excel, uniqueColumn);
 
-            var listDeferences = listXlsx.Except(listXml);
-     
-            return listDeferences.ToList();
+            var datadeference = dataFromExcel.Except(dataFromXml);
+
+           // NorthwindEntities entities = new NorthwindEntities();
+            DataTable dt = new DataTable("Deferences");
+            dt.Columns.Add(uniqueColumn);
+
+            foreach (var item in datadeference)
+            {
+                dt.Rows.Add(item);
+            }
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                wb.Worksheets.Add(dt);
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    wb.SaveAs(stream);                
+                }
+            }
+            return default;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Compare()
+        {
+            return View();
         }
     }
 }

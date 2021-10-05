@@ -9,6 +9,6 @@ namespace ASCIWebApp
 {
 	public interface IXmlService
 	{
-		List<IACSShort> GetDataFromXml(IFormFile file);
+		List<string> GetDataFromXml(IFormFile file, string uniqueColumn);
 	}
 }
