@@ -1,10 +1,21 @@
 ﻿<header>
     <div class="content-wrapper">
         <div class="float-left">
-
         </div>
     </div>
 </header>
 <div id="body">
-   <div></div>
+    <h2>If you want compare uploaded file click on button Compare</h2>
+    <div>
+        <button asp-action="Compare">Submit</button>
+    </div>
+    <select class="form-control">
+        <option value="" selected disabled hidden>Choose here</option>
+        <option name="uniqueColumn" value="SocCardNum">SocCardNum</option>
+        <option name="uniqueColumn" value="PassportNum">PassportNum</option>
+        <option name="uniqueColumn" value="LAccountNum">LAccountNum</option>
+        <option name="uniqueColumn" value="ANTPType">ANTPType</option>
+    </select>
+    <input type="submit" value="Send"/>
+    }
 </div>

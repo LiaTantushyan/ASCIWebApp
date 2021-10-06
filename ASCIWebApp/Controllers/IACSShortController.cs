@@ -11,6 +11,8 @@ using ASCIWebApp.Helpers;
 using ASCIWebApp.Models;
 using System.Data;
 using ClosedXML.Excel;
+using System.Configuration;
+using System.Data.SqlClient;
 
 namespace ASCIWebApp.Controllers
 {
@@ -29,9 +31,10 @@ namespace ASCIWebApp.Controllers
         public IActionResult Index()
         {
             return View();
+
         }
         [HttpPost]
-        public async Task<IActionResult> UploadFileToServer(IFormFile xml, IFormFile excel)
+        public async Task<IActionResult> UploadFileToServer([FromForm]IFormFile xml, [FromForm] IFormFile excel)
         {
             string xmlFileExtension = Path.GetExtension(xml.FileName);
             string excelFileExtension = Path.GetExtension(excel.FileName);
@@ -62,18 +65,24 @@ namespace ASCIWebApp.Controllers
             }
 
             TempData["message"] = $"Files are succesfully validated. Press Compare to compare them";
-            return View("Compare");
+            return RedirectToAction("Compare");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Compare()
+        {
+            return View();
         }
 
         [HttpPost]
-        public async Task<List<IACSShort>> Compare([FromForm] IFormFile xml, [FromForm] IFormFile excel, [FromForm] string uniqueColumn)
+        public async Task<List<IACSShort>> Compare([FromForm] IFormFile xml, [FromForm] IFormFile excel, string uniqueColumn)
         {
+            
             var dataFromXml = _xmlService.GetDataFromXml(xml, uniqueColumn);
             var dataFromExcel = _excelService.GetDataFromExcel(excel, uniqueColumn);
 
             var datadeference = dataFromExcel.Except(dataFromXml);
 
-           // NorthwindEntities entities = new NorthwindEntities();
             DataTable dt = new DataTable("Deferences");
             dt.Columns.Add(uniqueColumn);
 
@@ -90,12 +99,6 @@ namespace ASCIWebApp.Controllers
                 }
             }
             return default;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Compare()
-        {
-            return View();
-        }
+        }    
     }
 }

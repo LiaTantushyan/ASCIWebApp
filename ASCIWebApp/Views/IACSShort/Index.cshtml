@@ -1,9 +1,5 @@
 ﻿@using ASCIWebApp;
 @using Microsoft.AspNetCore.Http;
-@{
-    ViewData["Title"] = "Home Page";
-}
-
 <header>
     <div class="content-wrapper">
         <div class="float-left">
@@ -11,36 +7,27 @@
         </div>
     </div>
 </header>
-
 <div id="body">
     @if (TempData["Message"] != null)
     {
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-        <script type="text/javascript">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript">
             $(document).ready(function () {
                 alert("@TempData["Message"]");
             });
-        </script>
+    </script>
     }
-    <select class="form-control">
-        <option value="" selected disabled hidden>Choose here</option>
-        <option value="SocCardNum">SocCardNum</option>
-        <option value="PassportNum">PassportNum</option>
-        <option value="LAccountNum">LAccountNum</option>
-        <option value="ANTPType">ANTPType</option>
-    </select>
-
     <form method="post" enctype="multipart/form-data">
         <div>
             <label for="file">Choose file to upload</label><br>
             <div>Upload Xml file</div>
-            <input type="file" id="file" name="xmlfile" accept="xml">
+            <input type="file" id="file" name="xml" accept="xml">
             <div>Upload Excel file</div>
-            <input type="file" id="file" name="xlsxfile" accept="xlsx">
+            <input type="file" id="file" name="excel" accept="xlsx">
         </div>
         <div>
             <button asp-action="UploadFileToServer">Submit</button>
         </div>
     </form>
-    
+
 </div>
