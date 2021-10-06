@@ -15,9 +15,9 @@ namespace ASCIWebApp.Services
 {
     public class ExcelService : IExcelService
     {
-        public List<string> GetDataFromExcel(IFormFile file, string uniqueColumn)
+        public List<string> GetDataFromExcel(string filePath, string uniqueColumn)
         {
-            var filePath = XmlCustomSerializer.GetFilePath(file);
+            
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             List<string> result = new List<string>();

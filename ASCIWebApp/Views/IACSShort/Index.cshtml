@@ -8,15 +8,6 @@
     </div>
 </header>
 <div id="body">
-    @if (TempData["Message"] != null)
-    {
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script type="text/javascript">
-            $(document).ready(function () {
-                alert("@TempData["Message"]");
-            });
-    </script>
-    }
     <form method="post" enctype="multipart/form-data">
         <div>
             <label for="file">Choose file to upload</label><br>
@@ -29,5 +20,13 @@
             <button asp-action="UploadFileToServer">Submit</button>
         </div>
     </form>
-
+    @*if (TempData["Message"] != null)
+    {
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                alert("@TempData["Message"]");
+            });
+        </script>
+    }*@
 </div>

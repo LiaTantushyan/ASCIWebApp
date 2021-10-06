@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -13,11 +12,16 @@ using System.Data;
 using ClosedXML.Excel;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace ASCIWebApp.Controllers
 {
     public class IACSShortController : Controller
     {
+        public static string xmlpath;
+        public static string excelpath;
+
         private readonly IXmlService _xmlService;
         private readonly IExcelService _excelService;
         private readonly IWebHostEnvironment _webhost;
@@ -34,8 +38,11 @@ namespace ASCIWebApp.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> UploadFileToServer([FromForm]IFormFile xml, [FromForm] IFormFile excel)
+        public async Task<IActionResult> UploadFileToServer(IFormFile xml, IFormFile excel)
         {
+            xmlpath = XmlCustomSerializer.GetFilePath(xml);
+            excelpath = XmlCustomSerializer.GetFilePath(excel);
+
             string xmlFileExtension = Path.GetExtension(xml.FileName);
             string excelFileExtension = Path.GetExtension(excel.FileName);
 
@@ -49,9 +56,9 @@ namespace ASCIWebApp.Controllers
             if (xmlFileExtension != ".xml" || xmlFileExtension != ".txt")
             {
                 TempData["message"] = $"XML file must have .xml/.txt extension";
-                return View("Index");
+                //return View("Index");
             }
-            
+
             if (excel.Length == 0 || excel == null)
             {
                 TempData["message"] = "Please upload a file that is not null or empty";
@@ -61,7 +68,7 @@ namespace ASCIWebApp.Controllers
             if (excelFileExtension != ".xlsx" || excelFileExtension != ".xls")
             {
                 TempData["message"] = $"Excel file must have .xlsx/.xls extension";
-                return View("Index");
+                //  return View("Index");
             }
 
             TempData["message"] = $"Files are succesfully validated. Press Compare to compare them";
@@ -69,36 +76,41 @@ namespace ASCIWebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Compare()
+        public IActionResult Compare()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<List<IACSShort>> Compare([FromForm] IFormFile xml, [FromForm] IFormFile excel, string uniqueColumn)
-        {
-            
-            var dataFromXml = _xmlService.GetDataFromXml(xml, uniqueColumn);
-            var dataFromExcel = _excelService.GetDataFromExcel(excel, uniqueColumn);
+        public async Task<List<IACSShort>> CompareLists()
+        {       
+            string selectedfield = Request.Form["selectvalue"].ToString();
 
-            var datadeference = dataFromExcel.Except(dataFromXml);
+
+            // var xml = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name));          
+            var dataFromXml = _xmlService.GetDataFromXml(xmlpath, selectedfield).ToList();
+            var dataFromExcel = _excelService.GetDataFromExcel(excelpath, selectedfield).ToList();
+
+            var datadeference = dataFromExcel.Except(dataFromXml); 
 
             DataTable dt = new DataTable("Deferences");
-            dt.Columns.Add(uniqueColumn);
+            dt.Columns.Add(selectedfield);
 
-            foreach (var item in datadeference)
-            {
-                dt.Rows.Add(item);
-            }
+            /* foreach (var item in datadeference)
+             {
+                 dt.Rows.Add(item);
+             }*/
             using (XLWorkbook wb = new XLWorkbook())
             {
                 wb.Worksheets.Add(dt);
                 using (MemoryStream stream = new MemoryStream())
                 {
-                    wb.SaveAs(stream);                
+                    wb.SaveAs(stream);
                 }
             }
             return default;
-        }    
+        }
     }
 }
+
+

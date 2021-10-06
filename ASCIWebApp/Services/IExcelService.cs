@@ -9,6 +9,6 @@ namespace ASCIWebApp.Services
 {
     public interface  IExcelService
     {
-        List<string> GetDataFromExcel(IFormFile file,string uniquecolumn);
+        List<string> GetDataFromExcel(string filePath, string uniquecolumn);
     }
 }

@@ -5,17 +5,17 @@
     </div>
 </header>
 <div id="body">
-    <h2>If you want compare uploaded file click on button Compare</h2>
-    <div>
-        <button asp-action="Compare">Submit</button>
-    </div>
-    <select class="form-control">
-        <option value="" selected disabled hidden>Choose here</option>
-        <option name="uniqueColumn" value="SocCardNum">SocCardNum</option>
-        <option name="uniqueColumn" value="PassportNum">PassportNum</option>
-        <option name="uniqueColumn" value="LAccountNum">LAccountNum</option>
-        <option name="uniqueColumn" value="ANTPType">ANTPType</option>
-    </select>
-    <input type="submit" value="Send"/>
-    }
+    <h5>If you want compare uploaded file click on button Compare</h5>
+    <form>
+        <select name="selectvalue">
+            <option value="" selected disabled hidden>Choose here</option>
+            <option value="SocCardNum">SocCardNum</option>
+            <option value="PassportNum">PassportNum</option>
+            <option value="LAccountNum">LAccountNum</option>
+            <option value="ANTPType">ANTPType</option>
+        </select>
+        <div>
+            <button formmethod="post" asp-action="CompareLists">Compare</button>
+        </div>
+    </form>
 </div>

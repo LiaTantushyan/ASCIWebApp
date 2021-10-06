@@ -27,11 +27,11 @@ namespace ASCIWebApp.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public List<string> GetDataFromXml(IFormFile file, string uniqueColumn)
+        public List<string> GetDataFromXml(string file, string uniqueColumn)
         {
-            XElement root = XElement.Load(XmlCustomSerializer.GetFilePath(file));
             XNamespace ed = "urn:cba-am:ed:v1.0";
-
+            XElement root = XElement.Load(file);
+           
             var listSelectedField = root.Descendants(ed + uniqueColumn)
                 .Select(i=>i.Value.ToString())
                 .ToList();

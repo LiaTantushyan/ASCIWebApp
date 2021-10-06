@@ -53,7 +53,7 @@ namespace ASCIWebApp
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=IACS}/{action=Index}/{id?}");
+                    pattern: "{controller=IACSShort}/{action=Index}/{id?}");
             });
         }
     }
