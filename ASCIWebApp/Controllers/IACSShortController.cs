@@ -93,7 +93,7 @@ namespace ASCIWebApp.Controllers
                 var datadeference = dataFromExcel.Except(dataFromXml).ToList();
                 if (datadeference != null)
                 {
-                    CreateExcelFile(selectedfield, datadeference)
+                    CreateExcelFile(selectedfield, datadeference);
                         TempData["message"] = "Excel files is created";
                         return View("Alert");               
                 }
