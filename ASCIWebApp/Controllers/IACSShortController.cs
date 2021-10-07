@@ -15,6 +15,7 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Threading;
 using ASCIWebApp.Data;
+using OfficeOpenXml;
 
 namespace ASCIWebApp.Controllers
 {
@@ -93,9 +94,7 @@ namespace ASCIWebApp.Controllers
                 var datadeference = dataFromExcel.Except(dataFromXml).ToList();
                 if (datadeference != null)
                 {
-                    CreateExcelFile(selectedfield, datadeference);
-                        TempData["message"] = "Excel files is created";
-                        return View("Alert");               
+                   
                 }
                 else
                 {
@@ -107,27 +106,21 @@ namespace ASCIWebApp.Controllers
             TempData["message"] = "List of xml or excel file is null";
             return View("Alert");
         }
-        public FileResult CreateExcelFile(string selectedcolumn,List<string> datadeference)
+        [HttpPost]
+        public IActionResult CreateExcelFile(string selectedcolumn, List<string> datadeference)
         {
-            //NorthwindEntities entities = new NorthwindEntities();
-            DataTable dt = new DataTable("Grid");
-            dt.Columns.AddRange(new DataColumn[1] { new DataColumn(selectedcolumn)});
-
-            foreach (var customer in datadeference)
+            var stream = new MemoryStream();
+            using (var package = new ExcelPackage(stream))
             {
-                dt.Rows.Add(customer);
+                var worksheet = package.Workbook.Worksheets.Add("Deferences");
+                worksheet.Cells.LoadFromCollection(datadeference);
+                package.Save();
             }
-
-            using (XLWorkbook wb = new XLWorkbook())
-            {
-                wb.Worksheets.Add(dt);
-                using (MemoryStream stream = new MemoryStream())
-                {
-                    wb.SaveAs(stream);
-                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Grid.xlsx");
-                }
-            }
+            stream.Position = 0;
+            string exname = $"deferences.xlsx";
+            return File(stream,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",exname);
         }
+
     }
 }
 

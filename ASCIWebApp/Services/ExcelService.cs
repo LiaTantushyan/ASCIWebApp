@@ -22,26 +22,22 @@ namespace ASCIWebApp.Services
     {
         public List<string> GetDataFromExcel(string filePath, string uniqueColumn)
         {
-            
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             List<string> result = new List<string>();
             using (ExcelPackage package = new ExcelPackage(new FileInfo(filePath)))
             {
                 foreach (ExcelWorksheet worksheet in package.Workbook.Worksheets)
-                {
-                    var data = reader.AsDataSet();
-                    
-                    foreach (DataTable table in data.Tables)
+                {                 
+                    for (int column = 1; column <= worksheet.Dimension.End.Column; column++)
                     {
-                        foreach (DataRow row in table.Rows)
+                        int row = 1;
+                        if (worksheet.Cells[row, column].Value.ToString() == uniqueColumn)
                         {
-                            foreach (DataColumn column in table.Columns)
+                            while(row < worksheet.Dimension.End.Row)
                             {
-                                if (column.ColumnName == uniqueColumn)
-                                {
-                                    result.Add(row[column.ColumnName].ToString());
-                                }       
+                                row++;
+                                result.Add(worksheet.Cells[row,column].Value.ToString());
                             }
                         }
                     }
