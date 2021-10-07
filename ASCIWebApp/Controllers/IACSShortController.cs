@@ -55,7 +55,7 @@ namespace ASCIWebApp.Controllers
                 return View("Alert");
             }
 
-            if (xmlFileExtension != ".xml" || xmlFileExtension != ".txt")
+            if (xmlFileExtension != ".xml" && xmlFileExtension != ".txt")
             {
                 TempData["message"] = $"XML file must have .xml/.txt extension";
                 //return View("Index");
@@ -67,7 +67,7 @@ namespace ASCIWebApp.Controllers
                 return View("Alert");
             }
 
-            if (excelFileExtension != ".xlsx" || excelFileExtension != ".xls")
+            if (excelFileExtension != ".xlsx" && excelFileExtension != ".xls")
             {
                 TempData["message"] = $"Excel file must have .xlsx/.xls extension";
                 //  return View("Index");
@@ -106,7 +106,7 @@ namespace ASCIWebApp.Controllers
             TempData["message"] = "List of xml or excel file is null";
             return View("Alert");
         }
-        [HttpPost]
+        [HttpGet]
         public IActionResult CreateExcelFile(string selectedcolumn, List<string> datadeference)
         {
             var stream = new MemoryStream();
