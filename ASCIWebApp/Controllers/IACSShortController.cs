@@ -94,7 +94,7 @@ namespace ASCIWebApp.Controllers
                 var datadeference = dataFromExcel.Except(dataFromXml).ToList();
                 if (datadeference != null)
                 {
-                   
+                    return View("Alert");
                 }
                 else
                 {
