@@ -91,7 +91,7 @@ namespace ASCIWebApp.Controllers
             var dataFromXml = _xmlService.GetDataFromXml(xmlpath, selectedfield).ToList();
             var dataFromExcel = _excelService.GetDataFromExcel(excelpath, selectedfield).ToList();
 
-            var datadeference = dataFromExcel.Except(dataFromXml); 
+            var datadeference = dataFromExcel.Except(dataFromXml).ToList(); 
 
             DataTable dt = new DataTable("Deferences");
             dt.Columns.Add(selectedfield);
