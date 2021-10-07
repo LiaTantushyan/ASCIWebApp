@@ -22,6 +22,7 @@ namespace ASCIWebApp.Services
     {
         public List<string> GetDataFromExcel(string filePath, string uniqueColumn)
         {
+            
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             List<string> result = new List<string>();
@@ -29,17 +30,18 @@ namespace ASCIWebApp.Services
             {
                 foreach (ExcelWorksheet worksheet in package.Workbook.Worksheets)
                 {
-                    List<string> ColumnNames = new List<string>();
-
-                    for (int column = 1; column <= worksheet.Dimension.End.Column; column++)
+                    var data = reader.AsDataSet();
+                    
+                    foreach (DataTable table in data.Tables)
                     {
-                        int row = 1;
-                        if (worksheet.Cells[row, column].Value.ToString() == uniqueColumn)
+                        foreach (DataRow row in table.Rows)
                         {
-                            while (row < worksheet.Dimension.End.Row)
+                            foreach (DataColumn column in table.Columns)
                             {
-                                row++;
-                                result.Add(worksheet.Cells[row, column].Value.ToString());
+                                if (column.ColumnName == uniqueColumn)
+                                {
+                                    result.Add(row[column.ColumnName].ToString());
+                                }       
                             }
                         }
                     }

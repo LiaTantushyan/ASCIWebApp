@@ -10,6 +10,7 @@
     <PackageReference Include="EPPlus" Version="5.7.5" />
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
+    <PackageReference Include="ExcelMapper" Version="5.2.328" />
     <PackageReference Include="LinqToExcel" Version="1.11.0" />
     <PackageReference Include="LinqToXsd" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
