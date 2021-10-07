@@ -6,7 +6,7 @@
 </header>
 <div id="body">
     <h5>If you want compare uploaded file click on button Compare</h5>
-    <form>
+    <form method="post">
         <select name="selectvalue">
             <option value="" selected disabled hidden>Choose here</option>
             <option value="SocCardNum">SocCardNum</option>
@@ -15,7 +15,7 @@
             <option value="ANTPType">ANTPType</option>
         </select>
         <div>
-            <button formmethod="post" asp-action="CompareLists">Compare</button>
+            <button formmethod="post" asp-action="CompareList">Compare</button>
         </div>
     </form>
 </div>

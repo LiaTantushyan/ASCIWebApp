@@ -14,6 +14,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Threading;
+using ASCIWebApp.Data;
 
 namespace ASCIWebApp.Controllers
 {
@@ -50,7 +51,7 @@ namespace ASCIWebApp.Controllers
             if (xml.Length == 0 || xml == null)
             {
                 TempData["message"] = "Please upload a file that is not null or empty";
-                return View("Index");
+                return View("Alert");
             }
 
             if (xmlFileExtension != ".xml" || xmlFileExtension != ".txt")
@@ -62,7 +63,7 @@ namespace ASCIWebApp.Controllers
             if (excel.Length == 0 || excel == null)
             {
                 TempData["message"] = "Please upload a file that is not null or empty";
-                return View("Index");
+                return View("Alert");
             }
 
             if (excelFileExtension != ".xlsx" || excelFileExtension != ".xls")
@@ -70,8 +71,6 @@ namespace ASCIWebApp.Controllers
                 TempData["message"] = $"Excel file must have .xlsx/.xls extension";
                 //  return View("Index");
             }
-
-            TempData["message"] = $"Files are succesfully validated. Press Compare to compare them";
             return RedirectToAction("Compare");
         }
 
@@ -82,33 +81,54 @@ namespace ASCIWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<List<IACSShort>> CompareLists()
-        {       
+        public async Task<IActionResult> CompareList()
+        {
             string selectedfield = Request.Form["selectvalue"].ToString();
 
-
-            // var xml = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name));          
             var dataFromXml = _xmlService.GetDataFromXml(xmlpath, selectedfield).ToList();
             var dataFromExcel = _excelService.GetDataFromExcel(excelpath, selectedfield).ToList();
 
-            var datadeference = dataFromExcel.Except(dataFromXml); 
+            if (dataFromXml != null && dataFromExcel != null)
+            {
+                var datadeference = dataFromExcel.Except(dataFromXml).ToList();
+                if (datadeference != null)
+                {
+                    if (_excelService.CreateExcelFile(selectedfield, datadeference))
+                    {
+                        TempData["message"] = "Excel files is created";
+                        return View("Alert");
+                    }
+                }
+                else
+                {
+                    TempData["message"] = "There are not any deference value ";
+                    return View("Alert");
+                }
 
-            DataTable dt = new DataTable("Deferences");
-            dt.Columns.Add(selectedfield);
+            }
+            TempData["message"] = "List of xml or excel file is null";
+            return View("Alert");
+        }
+        public FileResult CreateExcelFile(string selectedcolumn,List<string> datadeference)
+        {
+            //NorthwindEntities entities = new NorthwindEntities();
+            DataTable dt = new DataTable("Grid");
+            dt.Columns.AddRange(new DataColumn[1] { new DataColumn(selectedcolumn)});
 
-            /* foreach (var item in datadeference)
-             {
-                 dt.Rows.Add(item);
-             }*/
+            foreach (var customer in datadeference)
+            {
+                dt.Rows.Add(customer);
+            }
+
             using (XLWorkbook wb = new XLWorkbook())
             {
                 wb.Worksheets.Add(dt);
                 using (MemoryStream stream = new MemoryStream())
                 {
                     wb.SaveAs(stream);
+                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Grid.xlsx");
                 }
             }
-            return default;
         }
     }
 }

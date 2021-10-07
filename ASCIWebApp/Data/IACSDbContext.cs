@@ -25,6 +25,10 @@ namespace ASCIWebApp.Data
 
 		public DbSet<IACSDepositDocumentHeader> IACSDepositDocumentHeaders { get; set; }
 
+		public IACSDbContext()		
+		{
+
+		}
 		public IACSDbContext(DbContextOptions<IACSDbContext> options)
 			: base(options)
 		{

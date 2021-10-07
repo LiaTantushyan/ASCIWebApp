@@ -10,6 +10,11 @@ using System.Data;
 using OfficeOpenXml;
 using Xml.Schema.Linq;
 using ASCIWebApp.Helpers;
+using ClosedXML.Excel;
+using System.Web;
+using System.Web.Mvc;
+using ASCIWebApp.Data;
+using Windows.UI.Xaml;
 
 namespace ASCIWebApp.Services
 {
@@ -17,34 +22,32 @@ namespace ASCIWebApp.Services
     {
         public List<string> GetDataFromExcel(string filePath, string uniqueColumn)
         {
-            
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             List<string> result = new List<string>();
-
-            using (var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read))
+            using (ExcelPackage package = new ExcelPackage(new FileInfo(filePath)))
             {
-                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                foreach (ExcelWorksheet worksheet in package.Workbook.Worksheets)
                 {
-                    var data = reader.AsDataSet();
-                    
-                    foreach (DataTable table in data.Tables)
+                    List<string> ColumnNames = new List<string>();
+
+                    for (int column = 1; column <= worksheet.Dimension.End.Column; column++)
                     {
-                        foreach (DataRow row in table.Rows)
+                        int row = 1;
+                        if (worksheet.Cells[row, column].Value.ToString() == uniqueColumn)
                         {
-                            foreach (DataColumn column in table.Columns)
+                            while (row < worksheet.Dimension.End.Row)
                             {
-                                if (column.ColumnName == uniqueColumn)
-                                {
-                                    result.Add(row[column.ColumnName].ToString());
-                                }       
+                                row++;
+                                result.Add(worksheet.Cells[row, column].Value.ToString());
                             }
                         }
                     }
                 }
             }
-
             return result;
         }
+     
     }
 }
+
