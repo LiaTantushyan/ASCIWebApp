@@ -113,7 +113,6 @@ namespace ASCIWebApp.Controllers
         [HttpGet]
         public IActionResult CreateExcelFile()
         {
-            var data = datadeference;
             var stream = new MemoryStream();
            
             using (var package = new ExcelPackage(stream))
@@ -121,7 +120,7 @@ namespace ASCIWebApp.Controllers
                 var worksheet = package.Workbook.Worksheets.Add("Deferences");
                 worksheet.DefaultColWidth=18;
                 worksheet.Cells["A1"].Value = selectedfield;
-                worksheet.Cells["A2"].LoadFromCollection(data);
+                worksheet.Cells["A2"].LoadFromCollection(datadeference);
                 package.Save();
             }
 
