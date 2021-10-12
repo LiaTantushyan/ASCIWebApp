@@ -12,6 +12,6 @@ namespace ASCIWebApp
 	{
 		//List<string> GetDataFromXml(string file, string uniqueColumn);
 
-		IEnumerable<string> StreamCustomerItem(string uri, string uniquecolumn);
+		IEnumerable<string> GetDataFromXml(string uri, string uniquecolumn);
 	}
 }
