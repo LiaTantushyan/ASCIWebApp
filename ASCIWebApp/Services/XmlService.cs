@@ -26,17 +26,54 @@ namespace ASCIWebApp.Services
             _db = db;
             _webHostEnvironment = webHostEnvironment;
         }
+        public IEnumerable<string> StreamCustomerItem(string uri, string uniquecolumn) {
+            using (XmlReader reader = XmlReader.Create(uri))
+            {
+                XElement name = null;
+                XElement item = null;     
+                reader.MoveToContent();
 
-        public List<string> GetDataFromXml(string file, string uniqueColumn)
-        {
-            XNamespace ed = "urn:cba-am:ed:v1.0";
-            XElement root = XElement.Load(file);
-           
-            var listSelectedField = root.Descendants(ed + uniqueColumn)
-                .Select(i=>i.Value.ToString())
-                .ToList();
-           
-            return listSelectedField;
+                // Parse the file, save header information when encountered, and yield the
+                // Item XElement objects as they're created.
+                // Loop through Customer elements.
+                while (reader.Read())
+                {
+                    if (reader.NodeType == XmlNodeType.Element && reader.Name == "BankCustomer")
+                    {
+                        // move to Name element
+                        while (reader.Read())
+                        {
+                            if (reader.NodeType == XmlNodeType.Element &&
+                                reader.Name == uniquecolumn)
+                            {
+                                name = XElement.ReadFrom(reader) as XElement;
+                                
+                                yield return name.Value;                               
+                            }
+                        }
+
+                        //// loop through Item elements
+                        //while (reader.Read())
+                        //{
+                        //    if (reader.NodeType == XmlNodeType.EndElement)
+                        //        break;
+                        //    if (reader.NodeType == XmlNodeType.Element
+                        //        && reader.Name == "Item")
+                        //    {
+                        //        item = XElement.ReadFrom(reader) as XElement;
+                        //        if (item != null)
+                        //        {
+                        //            XElement tempRoot = new XElement("Root",
+                        //                new XElement(name)
+                        //            );
+                        //            tempRoot.Add(item);
+                        //            yield return item;
+                        //        }
+                        //    }
+                        //}
+                    }
+                }
+            }
         }
     }
 }

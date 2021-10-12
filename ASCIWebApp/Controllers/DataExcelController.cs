@@ -90,7 +90,7 @@ namespace ASCIWebApp.Controllers
         {
             selectedfield = Request.Form["selectvalue"].ToString();
 
-            var dataFromXml = _xmlService.GetDataFromXml(xmlpath, selectedfield).ToList();
+            var dataFromXml = _xmlService.StreamCustomerItem(xmlpath, selectedfield).ToList();
             var dataFromExcel = _excelService.GetDataFromExcel(excelpath, selectedfield).ToList();
 
             if (dataFromXml != null && dataFromExcel != null)
