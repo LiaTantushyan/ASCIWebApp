@@ -32,15 +32,18 @@ namespace ASCIWebApp.Services
 
             using (XmlReader reader = XmlReader.Create(uri))
             {
-                XElement name = null;                   
+                XNode name = null;                   
                 reader.MoveToContent();
                 while (reader.Read())
                 {
-                    if (reader.NodeType == XmlNodeType.Element && reader.Name == "ed:"+uniquecolumn)
+                    if (reader.NodeType == XmlNodeType.Element)
                     {
-                        name = XElement.ReadFrom(reader) as XElement;
+                        if(reader.Name.Equals("ed:" + uniquecolumn, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            name = XElement.ReadFrom(reader);
 
-                        yield return name.Value;
+                            yield return name.ToString();
+                        }  
                     }                                     
                 }
             }

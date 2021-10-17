@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -7,14 +6,7 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using ASCIWebApp.Services;
 using ASCIWebApp.Helpers;
-using ASCIWebApp.Models;
-using System.Data;
-using ClosedXML.Excel;
-using System.Configuration;
-using System.Data.SqlClient;
 using System.Collections.Generic;
-using System.Threading;
-using ASCIWebApp.Data;
 using OfficeOpenXml;
 
 namespace ASCIWebApp.Controllers
@@ -36,46 +28,36 @@ namespace ASCIWebApp.Controllers
             _xmlService = xmlService;
             _excelService = excelService;
         }
+
         [HttpGet]
         public IActionResult Index()
         {
             return View();
-
         }
+
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 3355443200)]
         [RequestSizeLimit(3355443200)]
         public async Task<IActionResult> UploadFileToServer(IFormFile xml, IFormFile excel)
         {
-            string xmlFileExtension = Path.GetExtension(xml.FileName);
-            string excelFileExtension = Path.GetExtension(excel.FileName);
+            var xmlResult = ThrowMessageIfInvalid(xml, FileTypes.Xml, new string[] { ".xml", ".txt" });
+            if (!string.IsNullOrEmpty(xmlResult))
+            {
+                TempData["Message"] = xmlResult;
+                return View("Index");
+            }
 
             xmlpath = XmlCustomSerializer.GetFilePath(xml);
+
+            var excelResult = ThrowMessageIfInvalid(excel, FileTypes.Excel, new string[] { ".xlsx", ".xls" });
+            if (!string.IsNullOrEmpty(excelResult))
+            {
+                TempData["Message"] = excelResult;
+                return View("Index");
+            }
+
             excelpath = XmlCustomSerializer.GetFilePath(excel);
 
-            if (xml.Length == 0 || xml == null)
-            {
-                TempData["message"] = "Please upload a file that is not null or empty";
-                return View("Index");
-            }
-
-            if (xmlFileExtension != ".xml" && xmlFileExtension != ".txt")
-            {
-                TempData["message"] = $"XML file must have .xml/.txt extension";
-                return View("Index");
-            }
-
-            if (excel.Length == 0 || excel == null)
-            {
-                TempData["message"] = "Please upload a file that is not null or empty";
-                return View("Index");
-            }
-
-            if (excelFileExtension != ".xlsx" && excelFileExtension != ".xls")
-            {
-                TempData["message"] = $"Excel file must have .xlsx/.xls extension";
-                return View("Index");
-            }
             return RedirectToAction("Compare");
         }
 
@@ -90,7 +72,7 @@ namespace ASCIWebApp.Controllers
         {
             selectedfield = Request.Form["selectvalue"].ToString();
 
-            var dataFromXml = _xmlService.GetDataFromXml(@"C:\Users\L.Tantushyan\Documents\24700_210902.xml", selectedfield).ToList();
+            var dataFromXml = _xmlService.GetDataFromXml(@"C:\Users\user\Downloads\DepositRegister\24700_210902.xml", selectedfield).ToList();
             var dataFromExcel = _excelService.GetDataFromExcel(excelpath, selectedfield).ToList();
 
             if (dataFromXml != null && dataFromExcel != null)
@@ -110,6 +92,7 @@ namespace ASCIWebApp.Controllers
             TempData["message"] = "List of xml or excel file is null";
             return View("Index");
         }
+
         [HttpGet]
         public IActionResult CreateExcelFile()
         {
@@ -128,7 +111,19 @@ namespace ASCIWebApp.Controllers
             return File(stream,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Deference.xlsx");
         }
 
+        private string ThrowMessageIfInvalid(IFormFile file,FileTypes type, string[] extensions)
+        {
+            if (file.Length == default || file is null)
+            {
+                return $"Your {type.ToString()} file is null or empty";
+            }
+
+            if (!extensions.Contains(Path.GetExtension(file.FileName)))
+            {
+                return $"Your {type.ToString()} extension is invalid";
+            }
+
+            return string.Empty;
+        }
     }
 }
-
-
