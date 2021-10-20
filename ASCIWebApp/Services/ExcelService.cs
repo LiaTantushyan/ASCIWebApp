@@ -1,20 +1,6 @@
-﻿using ASCIWebApp.Models;
-using ExcelDataReader;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Data;
 using OfficeOpenXml;
-using Xml.Schema.Linq;
-using ASCIWebApp.Helpers;
-using ClosedXML.Excel;
-using System.Web;
-using System.Web.Mvc;
-using ASCIWebApp.Data;
-using Windows.UI.Xaml;
 
 namespace ASCIWebApp.Services
 {

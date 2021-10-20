@@ -1,4 +1,3 @@
-using ASCIWebApp.Data;
 using ASCIWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,8 +20,6 @@ namespace ASCIWebApp
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllersWithViews();
-			services.AddDbContext<IACSDbContext>(options =>
-					options.UseSqlServer(Configuration.GetConnectionString("AppContext")));
 			services.AddMvc();
 			services.AddTransient<IXmlService, XmlService>();
 			services.AddTransient<IExcelService, ExcelService>();
