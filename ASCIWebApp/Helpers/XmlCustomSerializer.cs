@@ -32,18 +32,18 @@ namespace ASCIWebApp.Helpers
 
 		public static T DeserializeFromXmlFile<T>(IFormFile file) where T : class
 		{
-			// get path for temp file to copy content from file in it
 			var filePath = GetFilePath(file);
 
 			return DeserializeFromXml<T>(filePath);
 		}
+
 		public static string GetFilePath(IFormFile formFile)
 		{
 			var filePath = Path.GetTempFileName();
 
 			using (var stream = System.IO.File.Create(filePath))
 			{
-				formFile.CopyToAsync(stream);
+				formFile.CopyTo(stream);
 			}
 			return filePath;
 		}

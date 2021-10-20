@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using Microsoft.AspNetCore.Hosting;
 using ASCIWebApp.Services;
 using ASCIWebApp.Helpers;
 using System.Collections.Generic;
@@ -21,10 +20,9 @@ namespace ASCIWebApp.Controllers
 
         private readonly IXmlService _xmlService;
         private readonly IExcelService _excelService;
-        private readonly IWebHostEnvironment _webhost;
-        public DataExcelController(IWebHostEnvironment webhost, IXmlService xmlService, IExcelService excelService)
+      
+        public DataExcelController(IXmlService xmlService, IExcelService excelService)
         {
-            _webhost = webhost;
             _xmlService = xmlService;
             _excelService = excelService;
         }
@@ -56,7 +54,7 @@ namespace ASCIWebApp.Controllers
                 return View("Index");
             }
 
-            excelpath = XmlCustomSerializer.GetFilePath(excel);
+            excelpath =  XmlCustomSerializer.GetFilePath(excel);
 
             return RedirectToAction("Compare");
         }
@@ -72,12 +70,13 @@ namespace ASCIWebApp.Controllers
         {
             selectedfield = Request.Form["selectvalue"].ToString();
 
-            var dataFromXml = _xmlService.GetDataFromXml(@"C:\Users\user\Downloads\DepositRegister\24700_210902.xml", selectedfield).ToList();
+            var dataFromXml = _xmlService.GetDataFromXml(xmlpath, selectedfield).ToList();
             var dataFromExcel = _excelService.GetDataFromExcel(excelpath, selectedfield).ToList();
 
             if (dataFromXml != null && dataFromExcel != null)
             {
-                 datadeference = dataFromExcel.Except(dataFromXml).ToList();
+                datadeference = dataFromExcel.Except(dataFromXml).ToList();
+               
                 if (datadeference != null)
                 {                   
                     return View("CreateExcel");
@@ -89,6 +88,7 @@ namespace ASCIWebApp.Controllers
                 }
 
             }
+
             TempData["message"] = "List of xml or excel file is null";
             return View("Index");
         }
