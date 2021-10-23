@@ -22,8 +22,12 @@ namespace ASCIWebApp.Services
                         {
                             while(row < worksheet.Dimension.End.Row)
                             {
+                                var value = worksheet.Cells[row, column].Value;
                                 row++;
-                                result.Add(worksheet.Cells[row,column].Value.ToString());
+                                if (value != null)
+                                {
+                                    result.Add(value.ToString());
+                                }
                             }
                         }
                     }
