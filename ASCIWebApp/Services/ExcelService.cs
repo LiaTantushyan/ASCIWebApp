@@ -29,9 +29,9 @@ namespace ASCIWebApp.Services
                     }
                 }
             }
+
             return result;
         }
-     
     }
 }
 

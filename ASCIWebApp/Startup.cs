@@ -21,8 +21,8 @@ namespace ASCIWebApp
 		{
 			services.AddControllersWithViews();
 			services.AddMvc();
-			services.AddTransient<IXmlService, XmlService>();
-			services.AddTransient<IExcelService, ExcelService>();
+			services.AddScoped<IXmlService, XmlService>();
+			services.AddScoped<IExcelService, ExcelService>();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

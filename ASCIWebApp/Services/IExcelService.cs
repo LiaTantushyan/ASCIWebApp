@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ASCIWebApp.Services
 {
-    public interface  IExcelService
+    public interface IExcelService
     {
         List<string> GetDataFromExcel(string filePath, string uniquecolumn);
     }

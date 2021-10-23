@@ -12,11 +12,10 @@ namespace ASCIWebApp.Controllers
 {
     public class DataExcelController : Controller
     {
-        public static string selectedfield;
-        public static List<string> datadeference { get; set; }
-
-        public static string xmlpath;
-        public static string excelpath;
+        private static string UniqueColumn;
+        private static List<string> Difference { get; set; }
+        private static string XmlPath;
+        private static string ExcelPath;
 
         private readonly IXmlService _xmlService;
         private readonly IExcelService _excelService;
@@ -36,7 +35,7 @@ namespace ASCIWebApp.Controllers
         [HttpPost]
         [RequestFormLimits(MultipartBodyLengthLimit = 3355443200)]
         [RequestSizeLimit(3355443200)]
-        public async Task<IActionResult> UploadFileToServer(IFormFile xml, IFormFile excel)
+        public async Task<IActionResult> CompareUploadedFiles(IFormFile xml, IFormFile excel)
         {
             var xmlResult = ThrowMessageIfInvalid(xml, FileTypes.Xml, new string[] { ".xml", ".txt" });
             if (!string.IsNullOrEmpty(xmlResult))
@@ -45,7 +44,7 @@ namespace ASCIWebApp.Controllers
                 return View("Index");
             }
 
-            xmlpath = XmlCustomSerializer.GetFilePath(xml);
+            XmlPath = XmlCustomSerializer.GetFilePath(xml);
 
             var excelResult = ThrowMessageIfInvalid(excel, FileTypes.Excel, new string[] { ".xlsx", ".xls" });
             if (!string.IsNullOrEmpty(excelResult))
@@ -54,7 +53,7 @@ namespace ASCIWebApp.Controllers
                 return View("Index");
             }
 
-            excelpath =  XmlCustomSerializer.GetFilePath(excel);
+            ExcelPath =  XmlCustomSerializer.GetFilePath(excel);
 
             return RedirectToAction("Compare");
         }
@@ -66,18 +65,18 @@ namespace ASCIWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CompareList()
+        public async Task<IActionResult> GetDatasDifference()
         {
-            selectedfield = Request.Form["selectvalue"].ToString();
+            UniqueColumn = Request.Form["selectvalue"].ToString();
 
-            var dataFromXml = _xmlService.GetDataFromXml(xmlpath, selectedfield).ToList();
-            var dataFromExcel = _excelService.GetDataFromExcel(excelpath, selectedfield).ToList();
+            var dataFromXml = _xmlService.GetDataFromXml(XmlPath, UniqueColumn).ToList();
+            var dataFromExcel = _excelService.GetDataFromExcel(ExcelPath, UniqueColumn);
 
             if (dataFromXml != null && dataFromExcel != null)
             {
-                datadeference = dataFromExcel.Except(dataFromXml).ToList();
+                Difference = dataFromExcel.Except(dataFromXml).ToList();
                
-                if (datadeference != null)
+                if (Difference != null)
                 {                   
                     return View("CreateExcel");
                 }
@@ -100,27 +99,27 @@ namespace ASCIWebApp.Controllers
            
             using (var package = new ExcelPackage(stream))
             {
-                var worksheet = package.Workbook.Worksheets.Add("Deferences");
+                var worksheet = package.Workbook.Worksheets.Add("Differences");
                 worksheet.DefaultColWidth=18;
-                worksheet.Cells["A1"].Value = selectedfield;
-                worksheet.Cells["A2"].LoadFromCollection(datadeference);
+                worksheet.Cells["A1"].Value = UniqueColumn;
+                worksheet.Cells["A2"].LoadFromCollection(Difference);
                 package.Save();
             }
 
             stream.Position = 0;
-            return File(stream,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Deference.xlsx");
+            return File(stream,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Differences.xlsx");
         }
 
         private string ThrowMessageIfInvalid(IFormFile file,FileTypes type, string[] extensions)
         {
             if (file.Length == default || file is null)
             {
-                return $"Your {type.ToString()} file is null or empty";
+                return $"Your {type} file is null or empty";
             }
 
             if (!extensions.Contains(Path.GetExtension(file.FileName)))
             {
-                return $"Your {type.ToString()} extension is invalid";
+                return $"Your {type} extension is invalid";
             }
 
             return string.Empty;
