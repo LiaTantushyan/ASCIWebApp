@@ -22,8 +22,8 @@ namespace ASCIWebApp.Services
                         {
                             while(row < worksheet.Dimension.End.Row)
                             {
-                                var value = worksheet.Cells[row, column].Value;
                                 row++;
+                                var value = worksheet.Cells[row, column].Value;                               
                                 if (value != null)
                                 {
                                     result.Add(value.ToString());
@@ -33,7 +33,6 @@ namespace ASCIWebApp.Services
                     }
                 }
             }
-
             return result;
         }
     }

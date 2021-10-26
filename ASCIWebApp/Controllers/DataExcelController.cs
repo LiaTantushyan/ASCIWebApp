@@ -19,7 +19,7 @@ namespace ASCIWebApp.Controllers
 
         private readonly IXmlService _xmlService;
         private readonly IExcelService _excelService;
-      
+
         public DataExcelController(IXmlService xmlService, IExcelService excelService)
         {
             _xmlService = xmlService;
@@ -33,8 +33,8 @@ namespace ASCIWebApp.Controllers
         }
 
         [HttpPost]
-        [RequestFormLimits(MultipartBodyLengthLimit = 3355443200)]
-        [RequestSizeLimit(3355443200)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 5600000000)]
+        [RequestSizeLimit(5600000000)]
         public async Task<IActionResult> CompareUploadedFiles(IFormFile xml, IFormFile excel)
         {
             var xmlResult = ThrowMessageIfInvalid(xml, FileTypes.Xml, new string[] { ".xml", ".txt" });
@@ -53,7 +53,7 @@ namespace ASCIWebApp.Controllers
                 return View("Index");
             }
 
-            ExcelPath =  XmlCustomSerializer.GetFilePath(excel);
+            ExcelPath = XmlCustomSerializer.GetFilePath(excel);
 
             return RedirectToAction("Compare");
         }
@@ -72,17 +72,17 @@ namespace ASCIWebApp.Controllers
             var dataFromXml = _xmlService.GetDataFromXml(XmlPath, UniqueColumn).ToList();
             var dataFromExcel = _excelService.GetDataFromExcel(ExcelPath, UniqueColumn);
 
-            if (dataFromXml != null && dataFromExcel != null)
+            if (dataFromXml.Count != 0 && dataFromExcel.Count != 0)
             {
                 Difference = dataFromExcel.Except(dataFromXml).ToList();
-               
-                if (Difference != null)
-                {                   
+
+                if (Difference.Count != 0)
+                {
                     return View("CreateExcel");
                 }
                 else
                 {
-                    TempData["message"] = "There are not any deference value ";
+                    TempData["message"] = "There are not any deference value";
                     return View("Index");
                 }
 
@@ -96,21 +96,24 @@ namespace ASCIWebApp.Controllers
         public IActionResult CreateExcelFile()
         {
             var stream = new MemoryStream();
-           
+
             using (var package = new ExcelPackage(stream))
             {
                 var worksheet = package.Workbook.Worksheets.Add("Differences");
-                worksheet.DefaultColWidth=18;
+                worksheet.DefaultColWidth = 20;
                 worksheet.Cells["A1"].Value = UniqueColumn;
+                worksheet.Cells["A1"].Style.Font.Bold = true;
                 worksheet.Cells["A2"].LoadFromCollection(Difference);
+                var row = worksheet.Dimension.End.Row;
+                worksheet.Cells[$"A1:A{row}"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                 package.Save();
             }
 
             stream.Position = 0;
-            return File(stream,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Differences.xlsx");
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Differences.xlsx");
         }
 
-        private string ThrowMessageIfInvalid(IFormFile file,FileTypes type, string[] extensions)
+        private string ThrowMessageIfInvalid(IFormFile file, FileTypes type, string[] extensions)
         {
             if (file.Length == default || file is null)
             {
