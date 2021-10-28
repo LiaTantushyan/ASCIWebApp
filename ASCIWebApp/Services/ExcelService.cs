@@ -18,7 +18,7 @@ namespace ASCIWebApp.Services
                     for (int column = 1; column <= worksheet.Dimension.End.Column; column++)
                     {
                         int row = 1;
-                        if (worksheet.Cells[row, column].Value.ToString() == uniqueColumn)
+                        if (worksheet.Cells[row, column].Value.ToString().ToLower() == uniqueColumn.ToLower())
                         {
                             while(row < worksheet.Dimension.End.Row)
                             {

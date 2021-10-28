@@ -36,7 +36,7 @@ namespace ASCIWebApp.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = 5600000000)]
         [RequestSizeLimit(5600000000)]
         public async Task<IActionResult> CompareUploadedFiles(IFormFile xml, IFormFile excel)
-        {
+         {
             var xmlResult = ThrowMessageIfInvalid(xml, FileTypes.Xml, new string[] { ".xml", ".txt" });
             if (!string.IsNullOrEmpty(xmlResult))
             {
@@ -110,7 +110,7 @@ namespace ASCIWebApp.Controllers
             }
 
             stream.Position = 0;
-            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Differences.xlsx");
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Differences.xlsx");       
         }
 
         private string ThrowMessageIfInvalid(IFormFile file, FileTypes type, string[] extensions)

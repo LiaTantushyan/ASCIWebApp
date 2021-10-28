@@ -18,12 +18,12 @@
     }
     <form method="post" enctype="multipart/form-data">
         <div>
-            <label for="file">Choose file to upload</label><br>
             <div>Upload Xml file</div>
             <input type="file" id="file" name="xml" accept="xml, txt">
             <div>Upload Excel file</div>
             <input type="file" id="file" name="excel" accept="xlsx, xls">
         </div>
+        <br>
         <div>
             <button asp-action="CompareUploadedFiles">Submit</button>
         </div>
