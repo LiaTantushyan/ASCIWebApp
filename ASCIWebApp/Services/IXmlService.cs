@@ -5,6 +5,6 @@ namespace ASCIWebApp
 {
 	public interface IXmlService
 	{
-		IEnumerable<string> GetDataFromXml(string uri, string uniquecolumn);
+		List<string> GetDataFromXml(string uri, string uniquecolumn);
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using OfficeOpenXml;
 
@@ -14,22 +15,29 @@ namespace ASCIWebApp.Services
             using (ExcelPackage package = new ExcelPackage(new FileInfo(filePath)))
             {
                 foreach (ExcelWorksheet worksheet in package.Workbook.Worksheets)
-                {                 
-                    for (int column = 1; column <= worksheet.Dimension.End.Column; column++)
+                {
+                    try
                     {
-                        int row = 1;
-                        if (worksheet.Cells[row, column].Value.ToString().ToLower() == uniqueColumn.ToLower())
+                        for (int column = 1; column <= worksheet.Dimension.End.Column; column++)
                         {
-                            while(row < worksheet.Dimension.End.Row)
+                            int row = 1;
+                            if (worksheet.Cells[row, column].Value.ToString().Equals(uniqueColumn, StringComparison.OrdinalIgnoreCase))
                             {
-                                row++;
-                                var value = worksheet.Cells[row, column].Value;                               
-                                if (value != null)
+                                while (row < worksheet.Dimension.End.Row)
                                 {
-                                    result.Add(value.ToString());
+                                    row++;
+                                    var value = worksheet.Cells[row, column].Value;
+                                    if (value != null)
+                                    {
+                                        result.Add(value.ToString());
+                                    }
                                 }
                             }
                         }
+                    }
+                    catch (Exception)
+                    {
+                        return result;
                     }
                 }
             }

@@ -9,27 +9,34 @@ namespace ASCIWebApp.Services
 {
     public class XmlService : IXmlService
     {
-        public IEnumerable<string> GetDataFromXml(string uri, string uniquecolumn)
+        public List<string> GetDataFromXml(string uri, string uniquecolumn)
         {
-            using (XmlReader reader = XmlReader.Create(new StreamReader(uri,Encoding.UTF8)))
+            var result = new List<string>();
+            using (XmlReader reader = XmlReader.Create(new StreamReader(uri, Encoding.UTF8)))
             {
                 XElement name = null;
-                reader.MoveToContent();
-               
-                while (reader.Read())
+                try
                 {
-                    if (reader.NodeType == XmlNodeType.Element)
+                    reader.MoveToContent();
+                    while (reader.Read())
                     {
-                        if (reader.Name.Equals("ed:" + uniquecolumn))
+                        if (reader.NodeType == XmlNodeType.Element)
                         {
+                            if (reader.Name.Equals("ed:" + uniquecolumn))
                             {
                                 name = XElement.ReadFrom(reader) as XElement;
-
-                                yield return name.Value;
+                                result.Add(name.Value);
                             }
                         }
                     }
                 }
+
+                catch (Exception)
+                {
+                    return new List<string>();
+                }
+
+                return result;
             }
         }
     }

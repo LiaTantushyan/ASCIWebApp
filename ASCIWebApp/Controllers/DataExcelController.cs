@@ -69,7 +69,7 @@ namespace ASCIWebApp.Controllers
         {
             UniqueColumn = Request.Form["selectvalue"].ToString();
 
-            var dataFromXml = _xmlService.GetDataFromXml(XmlPath, UniqueColumn).ToList();
+            var dataFromXml = _xmlService.GetDataFromXml(XmlPath, UniqueColumn);
             var dataFromExcel = _excelService.GetDataFromExcel(ExcelPath, UniqueColumn);
 
             if (dataFromXml.Count != 0 && dataFromExcel.Count != 0)
@@ -88,7 +88,7 @@ namespace ASCIWebApp.Controllers
 
             }
 
-            TempData["message"] = "List of xml or excel file is null";
+            TempData["message"] = "List from xml or excel is empty";
             return View("Index");
         }
 
@@ -115,7 +115,7 @@ namespace ASCIWebApp.Controllers
 
         private string ThrowMessageIfInvalid(IFormFile file, FileTypes type, string[] extensions)
         {
-            if (file.Length == default || file is null)
+            if (file is null || file.Length == default)
             {
                 return $"Your {type} file is null or empty";
             }
