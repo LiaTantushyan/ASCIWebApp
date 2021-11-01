@@ -33,7 +33,7 @@ namespace ASCIWebApp.Services
 
                 catch (Exception)
                 {
-                    return new List<string>();
+                    return null;
                 }
 
                 return result;

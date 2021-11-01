@@ -72,7 +72,12 @@ namespace ASCIWebApp.Controllers
             var dataFromXml = _xmlService.GetDataFromXml(XmlPath, UniqueColumn);
             var dataFromExcel = _excelService.GetDataFromExcel(ExcelPath, UniqueColumn);
 
-            if (dataFromXml.Count != 0 && dataFromExcel.Count != 0)
+            if (dataFromXml is null)
+            {
+                TempData["message"] = "Something is wrong in your Xml file or received list is empty";
+                return View("Index");
+            }
+            if (dataFromExcel.Count != 0)
             {
                 Difference = dataFromExcel.Except(dataFromXml).ToList();
 
@@ -85,10 +90,8 @@ namespace ASCIWebApp.Controllers
                     TempData["message"] = "There are not any deference value";
                     return View("Index");
                 }
-
             }
-
-            TempData["message"] = "List from xml or excel is empty";
+            TempData["message"] = "Received list from Excel is empty";
             return View("Index");
         }
 
@@ -117,7 +120,7 @@ namespace ASCIWebApp.Controllers
         {
             if (file is null || file.Length == default)
             {
-                return $"Your {type} file is null or empty";
+                return $"Upload {type} file!";
             }
 
             if (!extensions.Contains(Path.GetExtension(file.FileName)))
